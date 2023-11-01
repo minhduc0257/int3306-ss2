@@ -1,3 +1,6 @@
+using System.Net;
+using System.Text.Json.Serialization;
+
 namespace int3306.Repository.Shared
 {
     public class BaseResult<TEntity> : IBaseResult<TEntity>
@@ -5,6 +8,10 @@ namespace int3306.Repository.Shared
         public TEntity? Data { get; init; }
         public bool Success { get; init; }
         public string Error { get; init; } = "";
+        
+        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
+        public HttpStatusCode? StatusCodeHint { get; init; }
 
         public static BaseResult<TEntity> FromSuccess(TEntity? data)
         {
@@ -12,7 +19,8 @@ namespace int3306.Repository.Shared
             {
                 Data = data,
                 Success = true,
-                Error = ""
+                Error = "",
+                StatusCodeHint = HttpStatusCode.OK
             };
         }
         
@@ -22,7 +30,8 @@ namespace int3306.Repository.Shared
             {
                 Data = default,
                 Success = false,
-                Error = "NotFound"
+                Error = "NotFound",
+                StatusCodeHint = HttpStatusCode.NotFound
             };
         }
         
@@ -32,7 +41,8 @@ namespace int3306.Repository.Shared
             {
                 Data = default,
                 Success = false,
-                Error = error
+                Error = error,
+                StatusCodeHint = HttpStatusCode.BadRequest
             };
         }
     }

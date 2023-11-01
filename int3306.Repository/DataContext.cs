@@ -32,12 +32,12 @@ namespace int3306.Repository
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<UserDetails> UserDetails { get; set; }
+        public DbSet<UserDetail> UserDetails { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(b => b.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<UserDetails>().Property(b => b.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<UserDetail>().Property(b => b.Id).ValueGeneratedOnAdd();
         }
         
 #pragma warning restore CS8618

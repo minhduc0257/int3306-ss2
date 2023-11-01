@@ -14,6 +14,7 @@ using ClaimTypes = int3306.Api.Structures.ClaimTypes;
 
 namespace int3306.Api.Controllers
 {
+    [ApiController]
     [Route("auth")]
     public class AuthenticationController : Controller
     {
@@ -70,7 +71,7 @@ namespace int3306.Api.Controllers
 
         private string GenerateJwt(int userId)
         {
-            var securityKey = new SymmetricSecurityKey(jwtOptions.SecurityKey);
+            var securityKey = jwtOptions.SecurityKey;
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {

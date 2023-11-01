@@ -5,7 +5,7 @@ using int3306.Entities.Shared;
 namespace int3306.Entities
 {
     [Table("user_detail")]
-    public class UserDetails : IBaseEntity
+    public class UserDetail : IBaseEntity
     {
 #pragma warning disable CS8618
         
@@ -24,9 +24,6 @@ namespace int3306.Entities
         
         [Column("phone_number")]
         public string PhoneNumber { get; set; } = "";
-        
-        [ForeignKey(nameof(UserId))]
-        public User user { get; set; }
 #pragma warning restore CS8618
     }
 }

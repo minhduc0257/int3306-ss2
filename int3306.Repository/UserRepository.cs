@@ -16,6 +16,20 @@ namespace int3306.Repository
             return await result;
         }
 
+        public async Task<IBaseResult<User>> GetWithDetail(int id)
+        {
+            var db = dataContext.GetDbSet<User>();
+            var result = await db
+                .Include(u => u.Detail)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (result == null)
+            {
+                return BaseResult<User>.FromNotFound();
+            }
+            return BaseResult<User>.FromSuccess(result);
+        }
+
         public async Task<IBaseResult<bool>> Register(string username, string hashedPassword)
         {
             try
@@ -29,13 +43,13 @@ namespace int3306.Repository
                     Password = hashedPassword
                 };
 
-                var userDetails = new UserDetails();
+                var userDetails = new UserDetail();
 
                 await dataContext.Database.BeginTransactionAsync();
                 dataContext.Add(newUser);
                 await dataContext.SaveChangesAsync();
 
-                userDetails.Id = newUser.Id;
+                userDetails.UserId = newUser.Id;
                 dataContext.Add(userDetails);
                 await dataContext.SaveChangesAsync();
                 await dataContext.Database.CommitTransactionAsync();

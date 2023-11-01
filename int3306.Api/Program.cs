@@ -1,11 +1,15 @@
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using dotenv.net;
 using int3306.Api;
 using int3306.Api.Structures;
 using int3306.Repository.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 DotEnv.Load();
 
@@ -13,20 +17,58 @@ var jwtOptions = new JwtOptions
 {
     Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "audience",
     Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "issuer",
-    SecurityKey = SHA1.HashData(
-        Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ?? "key")
+    SecurityKey = new SymmetricSecurityKey(
+        SHA1.HashData(
+            Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ?? "key")        
+        )
     )
 };
 var builder = WebApplication.CreateBuilder(args);
 
 var tokenValidationParameters = new TokenValidationParameters
 {
-    ValidIssuer = jwtOptions.Issuer
+    ValidIssuer = jwtOptions.Issuer,
+    IssuerSigningKey = jwtOptions.SecurityKey
 };
 
+builder.Services.AddAuthorization(o =>
+{
+    var defaultAuthorizationPolicyBuilder =
+        new AuthorizationPolicyBuilder(
+                JwtBearerDefaults.AuthenticationScheme
+            )
+            .RequireAuthenticatedUser();
+    o.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+});
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter \"Bearer\" followed by the token",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+                Reference = new OpenApiReference { Id = "Bearer", Type = ReferenceType.SecurityScheme }
+            },
+            new List<string>()
+        }
+    });
+
+    options.EnableAnnotations();
+    options.CustomSchemaIds(type => type.ToString());
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+});
 builder.Services.AddSingleton(jwtOptions);
 builder.Services.AddRepository(opt =>
 {

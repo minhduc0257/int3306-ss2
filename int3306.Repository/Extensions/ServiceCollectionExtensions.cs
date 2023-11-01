@@ -9,6 +9,7 @@ namespace int3306.Repository.Extensions
         {
             serviceCollection.AddDbContextPool<DataContext>(optionsAction);
             serviceCollection.AddScoped<UserRepository>();
+            serviceCollection.AddScoped<UserDetailRepository>();
             return serviceCollection;
         }
     }

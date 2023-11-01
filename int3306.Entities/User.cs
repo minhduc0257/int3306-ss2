@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using int3306.Entities.Shared;
 
 namespace int3306.Entities
@@ -15,6 +16,8 @@ namespace int3306.Entities
         [Column("username")]
         public string Username { get; set; }
         
+        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         [Column("password")]
         public string Password { get; set; }
         
@@ -24,7 +27,7 @@ namespace int3306.Entities
         [Column("creation_time")]
         public DateTimeOffset CreationTime { get; set; }
 
-        public UserDetails Details { get; set; }
+        public UserDetail Detail { get; set; }
 #pragma warning restore CS8618
     }
 }
