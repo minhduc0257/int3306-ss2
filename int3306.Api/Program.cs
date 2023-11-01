@@ -13,6 +13,10 @@ using Microsoft.OpenApi.Models;
 
 DotEnv.Load();
 
+if (int.TryParse(Environment.GetEnvironmentVariable("PORT") ?? "5000", out var port))
+{
+    port = 5000;
+}
 var jwtOptions = new JwtOptions
 {
     Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "audience",
@@ -94,4 +98,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+app.Run($"https://0.0.0.0:{port}");

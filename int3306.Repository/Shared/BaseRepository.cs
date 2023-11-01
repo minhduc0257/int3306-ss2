@@ -33,7 +33,7 @@ namespace int3306.Repository.Shared
                 var entry = await db.AddAsync(entity);
                 await dataContext.SaveChangesAsync();
 
-                return BaseResult<int>.FromSuccess(entry.Entity.Id);
+                return BaseResult<int>.FromSuccess(entity.Id);
             }
             catch (Exception e)
             {
