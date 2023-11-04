@@ -13,6 +13,7 @@ namespace int3306.Repository.Extensions
             
             serviceCollection.AddScoped<IBaseRepository<User>, UserRepository>();
             serviceCollection.AddScoped<IBaseRepository<ProductType>, ProductTypeRepository>();
+            serviceCollection.AddScoped<IBaseRepository<ProductTag>, ProductTagRepository>();
             serviceCollection.AddScoped<IBaseRepository<UserDetail>, UserDetailRepository>();
 
             serviceCollection.AddScoped<UserRepository>();

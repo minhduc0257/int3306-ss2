@@ -34,6 +34,7 @@ namespace int3306.Repository
         public DbSet<User> Users { get; set; }
         public DbSet<UserDetail> UserDetails { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
+        public DbSet<ProductTag> ProductTag { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

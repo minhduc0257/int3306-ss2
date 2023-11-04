@@ -6,9 +6,9 @@ namespace int3306.Repository.Shared
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class, IBaseEntity
     {
         protected readonly DataContext DataContext;
-        public BaseRepository(DataContext DataContext)
+        protected BaseRepository(DataContext dataContext)
         {
-            this.DataContext = DataContext;
+            DataContext = dataContext;
         }
 
         public virtual async Task<IBaseResult<TEntity>> Get(int id)
