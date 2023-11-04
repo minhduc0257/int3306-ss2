@@ -83,7 +83,8 @@ builder.Services.AddSwaggerGen(options =>
     options.EnableAnnotations();
     options.CustomSchemaIds(type => type.ToString());
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-});
+    options.DocumentFilter<SwaggerPrefixDocumentFilter>("api");
+}).AddSwaggerGenNewtonsoftSupport();
 builder.Services.AddSingleton(jwtOptions);
 builder.Services.AddRepository(opt =>
 {
@@ -98,14 +99,23 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
 });
 
 var app = builder.Build();
-app.UseCors();
-app.UseAuthentication();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseAuthorization();
-app.MapControllers();
+app.Map("/api", app =>
+{
+    app.UseAuthentication();
+    app.UseRouting();
+    app.UseCors();
+    app.UseAuthorization();
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller}/{action=Index}/{id?}");
+    });
+});
 
 app.Run($"http://0.0.0.0:{port}");
