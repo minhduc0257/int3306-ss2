@@ -9,12 +9,13 @@ namespace int3306.Repository.Extensions
     {
         public static IServiceCollection AddRepository(this IServiceCollection serviceCollection, Action<DbContextOptionsBuilder> optionsAction)
         {
-            serviceCollection.AddDbContextPool<DataContext>(optionsAction);
-            
+            serviceCollection.AddDbContext<DataContext>(optionsAction);
+
             serviceCollection.AddScoped<IBaseRepository<User>, UserRepository>();
             serviceCollection.AddScoped<IBaseRepository<ProductType>, ProductTypeRepository>();
             serviceCollection.AddScoped<IBaseRepository<ProductTag>, ProductTagRepository>();
             serviceCollection.AddScoped<IBaseRepository<UserDetail>, UserDetailRepository>();
+            serviceCollection.AddScoped<IBaseRepository<Product>, ProductRepository>();
 
             serviceCollection.AddScoped<UserRepository>();
             return serviceCollection;

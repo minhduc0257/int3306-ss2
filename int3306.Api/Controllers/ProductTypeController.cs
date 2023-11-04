@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace int3306.Api.Controllers
 {
+    [ApiController]
     [Route("[controller]")]
     public class ProductTypeController : BaseController<ProductType>
     {

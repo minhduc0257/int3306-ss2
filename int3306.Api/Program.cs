@@ -27,13 +27,24 @@ var jwtOptions = new JwtOptions
         )
     )
 };
-var builder = WebApplication.CreateBuilder(args);
-
 var tokenValidationParameters = new TokenValidationParameters
 {
     ValidIssuer = jwtOptions.Issuer,
     IssuerSigningKey = jwtOptions.SecurityKey
 };
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(cors =>
+{
+    cors.AddDefaultPolicy(
+        policyBuilder => policyBuilder
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .SetIsOriginAllowed(_ => true)
+    );
+});
 
 builder.Services.AddAuthorization(o =>
 {
@@ -87,7 +98,7 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
 });
 
 var app = builder.Build();
-
+app.UseCors();
 app.UseAuthentication();
 if (app.Environment.IsDevelopment())
 {
@@ -95,7 +106,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run($"http://0.0.0.0:{port}");

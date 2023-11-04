@@ -30,7 +30,7 @@ namespace int3306.Entities
         [Column("creation_time")]
         public DateTimeOffset CreationTime { get; set; }
 
-        public UserDetail Detail { get; set; }
+        public virtual UserDetail Detail { get; set; }
 #pragma warning restore CS8618
     }
 }

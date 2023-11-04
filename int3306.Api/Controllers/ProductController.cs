@@ -7,8 +7,8 @@ namespace int3306.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductTagController : BaseController<ProductTag>
+    public class ProductController : BaseController<Product>
     {
-        public ProductTagController(IBaseRepository<ProductTag> repository) : base(repository) {}
+        public ProductController(IBaseRepository<Product> repository) : base(repository) {}
     }
 }

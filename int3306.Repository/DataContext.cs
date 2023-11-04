@@ -35,11 +35,17 @@ namespace int3306.Repository
         public DbSet<UserDetail> UserDetails { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
         public DbSet<ProductTag> ProductTag { get; set; }
+        public DbSet<Product> Product { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(b => b.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<UserDetail>().Property(b => b.Id).ValueGeneratedOnAdd();
+        }
+        
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
         }
         
 #pragma warning restore CS8618
