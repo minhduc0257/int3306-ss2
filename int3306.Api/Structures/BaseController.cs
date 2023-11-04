@@ -7,17 +7,17 @@ namespace int3306.Api.Structures
 {
     public class BaseController<T> : Controller where T : IBaseEntity
     {
-        private readonly IBaseRepository<T> repository;
+        protected readonly IBaseRepository<T> Repository;
         public BaseController(IBaseRepository<T> repository)
         {
-            this.repository = repository;
+            Repository = repository;
         }
         
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<ActionResult<IBaseResult<T>>> Get(int id)
+        public virtual async Task<ActionResult<IBaseResult<T>>> Get(int id)
         {
-            var r = await repository.Get(id);
+            var r = await Repository.Get(id);
             return r.StatusCodeHint switch
             {
                 null => r.Success ? Ok(r) : BadRequest(r),
@@ -29,7 +29,7 @@ namespace int3306.Api.Structures
         [Route("List")]
         public async Task<ActionResult<IBaseResult<T>>> List()
         {
-            var r = await repository.List();
+            var r = await Repository.List();
             return r.StatusCodeHint switch
             {
                 null => r.Success ? Ok(r) : BadRequest(r),
@@ -42,7 +42,7 @@ namespace int3306.Api.Structures
         [Authorize]
         public async Task<ActionResult<IBaseResult<T>>> Post([FromBody] T payload)
         {
-            var r = await repository.Post(payload);
+            var r = await Repository.Post(payload);
             return r.StatusCodeHint switch
             {
                 null => r.Success ? Ok(r) : BadRequest(r),
@@ -55,7 +55,7 @@ namespace int3306.Api.Structures
         [Authorize]
         public async Task<ActionResult<IBaseResult<T>>> Put(int id, [FromBody] T payload)
         {
-            var r = await repository.Put(id, payload);
+            var r = await Repository.Put(id, payload);
             return r.StatusCodeHint switch
             {
                 null => r.Success ? Ok(r) : BadRequest(r),
@@ -68,7 +68,7 @@ namespace int3306.Api.Structures
         [Authorize]
         public async Task<ActionResult<IBaseResult<T>>> Delete(int id)
         {
-            var r = await repository.Delete(id);
+            var r = await Repository.Delete(id);
             return r.StatusCodeHint switch
             {
                 null => r.Success ? Ok(r) : BadRequest(r),

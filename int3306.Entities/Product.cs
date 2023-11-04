@@ -14,7 +14,7 @@ namespace int3306.Entities
         public int Status { get; set; }
         
         [Column("product_type_id")]
-        public int ProductTypeId { get; set; }
+        public int? ProductTypeId { get; set; }
         
         
         public string Name { get; set; }
@@ -36,6 +36,13 @@ namespace int3306.Entities
         [JsonProperty("product_type")]
         [ForeignKey(nameof(ProductTypeId))]
         public virtual ProductType? ProductType { get; set; }
+        
+        [JsonProperty("product_tags")]
+        [JsonIgnore]
+        public virtual List<ProductToTag> ProductToTags { get; set; } = new();
+
+        [NotMapped]
+        public virtual List<ProductTag> ProductTags { get; set; } = new();
 #pragma warning restore CS8618
     }
 }

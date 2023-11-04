@@ -41,6 +41,15 @@ namespace int3306.Repository
         {
             modelBuilder.Entity<User>().Property(b => b.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<UserDetail>().Property(b => b.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ProductToTag>()
+                .HasOne(pt => pt.Product)
+                .WithMany(pt => pt.ProductToTags)
+                .HasForeignKey(pt => pt.ProductId);
+            
+            modelBuilder.Entity<ProductToTag>()
+                .HasOne(pt => pt.Product)
+                .WithMany(pt => pt.ProductToTags)
+                .HasForeignKey(pt => pt.ProductId);
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

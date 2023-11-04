@@ -14,12 +14,46 @@ namespace int3306.Repository
             {
                 var r = await DataContext.GetDbSet<Product>()
                     .Include(product => product.ProductType)
+                    .Include(product => product.ProductToTags)
+                    .ThenInclude(tag => tag.ProductTag)
                     .FirstOrDefaultAsync(e => e.Id == id);
+                if (r != null)
+                {
+                    r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
+                }
                 return r != null ? BaseResult<Product>.FromSuccess(r) : BaseResult<Product>.FromNotFound();
             }
             catch (Exception e)
             {
                 return BaseResult<Product>.FromError(e.ToString());
+            }
+        }
+
+        public override async Task<IBaseResult<List<Product>>> List(bool inUse = true)
+        {
+            try
+            {
+                var a = (IQueryable<Product>) DataContext.GetDbSet<Product>()
+                    .Include(product => product.ProductType)
+                    .Include(product => product.ProductToTags)
+                    .ThenInclude(tag => tag.ProductTag);
+
+                if (inUse)
+                {
+                    a = a.Where(entity => entity.Status > 0);
+                }
+
+                var result = await a.ToListAsync();
+                result = result.Select(r =>
+                {
+                    r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
+                    return r;
+                }).ToList();
+                return BaseResult<List<Product>>.FromSuccess(result);
+            }
+            catch (Exception e)
+            {
+                return BaseResult<List<Product>>.FromError(e.ToString());
             }
         }
     }
