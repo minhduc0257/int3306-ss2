@@ -5,17 +5,17 @@ namespace int3306.Repository.Shared
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class, IBaseEntity
     {
-        protected readonly DataContext dataContext;
-        public BaseRepository(DataContext dataContext)
+        protected readonly DataContext DataContext;
+        public BaseRepository(DataContext DataContext)
         {
-            this.dataContext = dataContext;
+            this.DataContext = DataContext;
         }
 
         public virtual async Task<IBaseResult<TEntity>> Get(int id)
         {
             try
             {
-                var r = await dataContext.GetDbSet<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
+                var r = await DataContext.GetDbSet<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
                 return r != null ? BaseResult<TEntity>.FromSuccess(r) : BaseResult<TEntity>.FromNotFound();
             }
             catch (Exception e)
@@ -23,15 +23,36 @@ namespace int3306.Repository.Shared
                 return BaseResult<TEntity>.FromError(e.ToString());
             }
         }
+        
+        public virtual async Task<IBaseResult<List<TEntity>>> List(bool inUse = true)
+        {
+            try
+            {
+                var a = (IQueryable<TEntity>) DataContext.GetDbSet<TEntity>();
+
+                if (inUse)
+                {
+                    a = a.Where(entity => entity.Status > 0);
+                }
+
+                var result = await a.ToListAsync();
+                return BaseResult<List<TEntity>>.FromSuccess(result);
+            }
+            catch (Exception e)
+            {
+                return BaseResult<List<TEntity>>.FromError(e.ToString());
+            }
+        }
 
         public virtual async Task<IBaseResult<int>> Post(TEntity entity)
         {
             try
             {
-                var db = dataContext.GetDbSet<TEntity>();
+                var db = DataContext.GetDbSet<TEntity>();
                 entity.Id = 0;
+                entity.Status = 1;
                 var entry = await db.AddAsync(entity);
-                await dataContext.SaveChangesAsync();
+                await DataContext.SaveChangesAsync();
 
                 return BaseResult<int>.FromSuccess(entity.Id);
             }
@@ -45,12 +66,14 @@ namespace int3306.Repository.Shared
         {
             try
             {
-                var current = await dataContext.GetDbSet<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
+                var current = await DataContext.GetDbSet<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
                 
                 if (current == null) return BaseResult<TEntity>.FromNotFound();
-                var entry = dataContext.Entry(current);
+                var entry = DataContext.Entry(current);
+
+                entity.Id = id;
                 entry.CurrentValues.SetValues(entity);
-                await dataContext.SaveChangesAsync();
+                await DataContext.SaveChangesAsync();
                 return BaseResult<TEntity>.FromSuccess(entry.Entity);
             }
             catch (Exception e)
@@ -63,13 +86,13 @@ namespace int3306.Repository.Shared
         {
             try
             {
-                var db = dataContext.GetDbSet<TEntity>();
+                var db = DataContext.GetDbSet<TEntity>();
                 var entry = await db.FirstOrDefaultAsync(e => e.Id == id);
                 
                 if (entry == null) return BaseResult<TEntity>.FromNotFound();
-                
-                db.Remove(entry);
-                await dataContext.SaveChangesAsync();
+
+                entry.Status = -1;
+                await DataContext.SaveChangesAsync();
                 return BaseResult<TEntity>.FromSuccess(null);
 
             }

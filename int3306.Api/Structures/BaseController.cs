@@ -1,5 +1,6 @@
 using int3306.Entities.Shared;
 using int3306.Repository.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace int3306.Api.Structures
@@ -24,8 +25,21 @@ namespace int3306.Api.Structures
             };
         }
         
+        [HttpGet]
+        [Route("List")]
+        public async Task<ActionResult<IBaseResult<T>>> List()
+        {
+            var r = await repository.List();
+            return r.StatusCodeHint switch
+            {
+                null => r.Success ? Ok(r) : BadRequest(r),
+                _ => StatusCode((int)r.StatusCodeHint.Value, r)
+            };
+        }
+        
         [HttpPost]
-        [Route("{id:int}")]
+        [Route("")]
+        [Authorize]
         public async Task<ActionResult<IBaseResult<T>>> Post([FromBody] T payload)
         {
             var r = await repository.Post(payload);
@@ -38,6 +52,7 @@ namespace int3306.Api.Structures
         
         [HttpPut]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<ActionResult<IBaseResult<T>>> Put(int id, [FromBody] T payload)
         {
             var r = await repository.Put(id, payload);
@@ -50,6 +65,7 @@ namespace int3306.Api.Structures
         
         [HttpDelete]
         [Route("{id:int}")]
+        [Authorize]
         public async Task<ActionResult<IBaseResult<T>>> Delete(int id)
         {
             var r = await repository.Delete(id);

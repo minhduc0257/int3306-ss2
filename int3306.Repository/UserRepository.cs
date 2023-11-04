@@ -11,14 +11,14 @@ namespace int3306.Repository
 
         public async Task<User?> GetByUsername(string username)
         {
-            var db = dataContext.GetDbSet<User>();
+            var db = DataContext.GetDbSet<User>();
             var result = db.FirstOrDefaultAsync(u => u.Username == username);
             return await result;
         }
 
         public async Task<IBaseResult<User>> GetWithDetail(int id)
         {
-            var db = dataContext.GetDbSet<User>();
+            var db = DataContext.GetDbSet<User>();
             var result = await db
                 .Include(u => u.Detail)
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -45,20 +45,20 @@ namespace int3306.Repository
 
                 var userDetails = new UserDetail();
 
-                await dataContext.Database.BeginTransactionAsync();
-                dataContext.Add(newUser);
-                await dataContext.SaveChangesAsync();
+                await DataContext.Database.BeginTransactionAsync();
+                DataContext.Add(newUser);
+                await DataContext.SaveChangesAsync();
 
                 userDetails.UserId = newUser.Id;
-                dataContext.Add(userDetails);
-                await dataContext.SaveChangesAsync();
-                await dataContext.Database.CommitTransactionAsync();
+                DataContext.Add(userDetails);
+                await DataContext.SaveChangesAsync();
+                await DataContext.Database.CommitTransactionAsync();
 
                 return BaseResult<bool>.FromSuccess(true);
             }
             catch (Exception e)
             {
-                await dataContext.Database.RollbackTransactionAsync();
+                await DataContext.Database.RollbackTransactionAsync();
                 return BaseResult<bool>.FromError(e.ToString());
             }
         }

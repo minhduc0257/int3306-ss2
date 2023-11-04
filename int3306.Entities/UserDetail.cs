@@ -13,6 +13,9 @@ namespace int3306.Entities
         [Column("id")]
         public int Id { get; set; }
         
+        [Column("status")]
+        public int Status { get; set; }
+        
         [Column("user_id")]
         public int UserId { get; set; }
         
