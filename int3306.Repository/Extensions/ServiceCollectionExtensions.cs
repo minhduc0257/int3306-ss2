@@ -14,10 +14,12 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<IBaseRepository<User>, UserRepository>();
             serviceCollection.AddScoped<IBaseRepository<ProductType>, ProductTypeRepository>();
             serviceCollection.AddScoped<IBaseRepository<ProductTag>, ProductTagRepository>();
+            serviceCollection.AddScoped<IBaseRepository<ProductToTag>, ProductToTagRepository>();
             serviceCollection.AddScoped<IBaseRepository<UserDetail>, UserDetailRepository>();
             serviceCollection.AddScoped<IBaseRepository<Product>, ProductRepository>();
 
             serviceCollection.AddScoped<UserRepository>();
+            serviceCollection.AddScoped<ProductToTagRepository>();
             return serviceCollection;
         }
     }

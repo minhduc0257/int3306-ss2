@@ -1,6 +1,9 @@
+using System.Collections.Immutable;
 using int3306.Api.Structures;
 using int3306.Entities;
+using int3306.Repository;
 using int3306.Repository.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace int3306.Api.Controllers
@@ -9,6 +12,38 @@ namespace int3306.Api.Controllers
     [Route("[controller]")]
     public class ProductController : BaseController<Product>
     {
-        public ProductController(IBaseRepository<Product> repository) : base(repository) {}
+        private readonly ProductToTagRepository productToTagRepository;
+        public ProductController(IBaseRepository<Product> repository, ProductToTagRepository ptt) : base(repository)
+        {
+            productToTagRepository = ptt;
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("SetTag/{productId:int}")]
+        public async Task<ActionResult<BaseResult<bool>>> SetTag(int productId, [FromBody] List<int> tagIds)
+        {
+            var records = await productToTagRepository.GetByProductId(productId);
+            if (!records.Success)
+            {
+                return Ok(records);
+            }
+
+            var list = records.Data!;
+            var set = tagIds.ToImmutableHashSet();
+            var toDelete = list
+                .Where(r => !set.Contains(r.ProductTagId))
+                .Select(record => record.Id);
+
+            var toAdd = set.Where(id => list.All(r => r.ProductTagId != id)).ToList();
+
+            var res = await productToTagRepository.BulkDelete(toDelete.ToList());
+            if (toAdd.Count != 0)
+            {
+                await productToTagRepository.BulkAdd(productId, toAdd);
+            }
+
+            return res.Success ? BaseResult<bool>.FromSuccess(true) : BaseResult<bool>.FromError(res.Error);
+        }
     }
 }

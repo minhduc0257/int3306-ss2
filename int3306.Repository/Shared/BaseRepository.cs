@@ -101,5 +101,29 @@ namespace int3306.Repository.Shared
                 return BaseResult<TEntity>.FromError(e.ToString());
             }
         }
+
+        public virtual async Task<IBaseResult<int>> BulkDelete(List<int> id)
+        {
+            try
+            {
+                var db = DataContext.GetDbSet<TEntity>();
+                var data = await db.Where(e => id.Contains(e.Id)).ToListAsync();
+                await DataContext.Database.BeginTransactionAsync();
+
+                foreach (var e in data)
+                {
+                    e.Status = -1;
+                }
+
+                await DataContext.SaveChangesAsync();
+                await DataContext.Database.CommitTransactionAsync();
+                return BaseResult<int>.FromSuccess(data.Count);
+            }
+            catch (Exception e)
+            {
+                await DataContext.Database.RollbackTransactionAsync();
+                return BaseResult<int>.FromError(e.ToString());
+            }
+        }
     }
 }

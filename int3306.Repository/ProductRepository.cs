@@ -14,7 +14,7 @@ namespace int3306.Repository
             {
                 var r = await DataContext.GetDbSet<Product>()
                     .Include(product => product.ProductType)
-                    .Include(product => product.ProductToTags)
+                    .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag)
                     .FirstOrDefaultAsync(e => e.Id == id);
                 if (r != null)
@@ -35,7 +35,7 @@ namespace int3306.Repository
             {
                 var a = (IQueryable<Product>) DataContext.GetDbSet<Product>()
                     .Include(product => product.ProductType)
-                    .Include(product => product.ProductToTags)
+                    .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag);
 
                 if (inUse)
