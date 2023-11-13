@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using int3306.Api.Structures;
 using int3306.Entities;
 using int3306.Repository;
+using int3306.Repository.Models;
 using int3306.Repository.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,19 @@ namespace int3306.Api.Controllers
     public class ProductController : BaseController<Product>
     {
         private readonly ProductToTagRepository productToTagRepository;
-        public ProductController(IBaseRepository<Product> repository, ProductToTagRepository ptt) : base(repository)
+        private readonly ProductRepository productRepository;
+        public ProductController(ProductRepository repository, ProductToTagRepository ptt) : base(repository)
         {
             productToTagRepository = ptt;
+            productRepository = repository;
+        }
+        
+        [HttpPost]
+        [Route("Find")]
+        public async Task<IBaseResult<List<Product>>> Find([FromBody] ProductSearchModel searchModel)
+        {
+            var records = await productRepository.Search(searchModel);
+            return records;
         }
 
         [HttpPut]

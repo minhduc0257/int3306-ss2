@@ -66,7 +66,7 @@ namespace int3306.Api.Structures
         [HttpDelete]
         [Route("{id:int}")]
         [Authorize]
-        public async Task<ActionResult<IBaseResult<T>>> Delete(int id)
+        public virtual async Task<ActionResult<IBaseResult<T>>> Delete(int id)
         {
             var r = await Repository.Delete(id);
             return r.StatusCodeHint switch
