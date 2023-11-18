@@ -21,12 +21,19 @@ namespace int3306.Repository
             var db = DataContext.GetDbSet<User>();
             var result = await db
                 .Include(u => u.Detail)
+                .Include(u => u.UserToRoles)
+                .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (result == null)
             {
                 return BaseResult<User>.FromNotFound();
             }
+
+#pragma warning disable CS8619
+            result.Roles = (List<Role>) result.UserToRoles.Select(r => r.Role).Where(r => r != null).ToList();
+#pragma warning restore CS8619
+            
             return BaseResult<User>.FromSuccess(result);
         }
 

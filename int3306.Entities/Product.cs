@@ -11,7 +11,7 @@ namespace int3306.Entities
 #pragma warning disable CS8618
         [Key]
         public int Id { get; set; }
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
         
         [Column("product_type_id")]
         public int? ProductTypeId { get; set; }

@@ -13,7 +13,7 @@ namespace int3306.Entities
         public int Id { get; set; }
 
         [Column("status")]
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
 
         [Column("name")]
         public string Name { get; set; }

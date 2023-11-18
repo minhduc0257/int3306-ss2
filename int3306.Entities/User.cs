@@ -14,7 +14,7 @@ namespace int3306.Entities
         public int Id { get; set; }
         
         [Column("status")]
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
         
         [Column("username")]
         public string Username { get; set; }
@@ -31,6 +31,13 @@ namespace int3306.Entities
         public DateTimeOffset CreationTime { get; set; }
 
         public virtual UserDetail Detail { get; set; }
+
+        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
+        public virtual List<UserToRole> UserToRoles { get; set; } = new();
+        
+        [NotMapped]
+        public virtual List<Role> Roles { get; set; } = new();
 #pragma warning restore CS8618
     }
 }

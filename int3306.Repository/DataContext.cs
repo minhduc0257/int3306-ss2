@@ -37,6 +37,8 @@ namespace int3306.Repository
         public DbSet<ProductTag> ProductTag { get; set; }
         public DbSet<ProductToTag> ProductToTag { get; set; }
         public DbSet<Product> Product { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserToRole> UserToRole { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,11 +48,11 @@ namespace int3306.Repository
                 .HasOne(pt => pt.Product)
                 .WithMany(pt => pt.ProductToTags)
                 .HasForeignKey(pt => pt.ProductId);
-            
-            modelBuilder.Entity<ProductToTag>()
-                .HasOne(pt => pt.Product)
-                .WithMany(pt => pt.ProductToTags)
-                .HasForeignKey(pt => pt.ProductId);
+
+            modelBuilder.Entity<UserToRole>()
+                .HasOne(u => u.User)
+                .WithMany(u => u.UserToRoles)
+                .HasForeignKey(ur => ur.UserId);
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
