@@ -12,35 +12,43 @@ namespace int3306.Api.Structures
         {
             Repository = repository;
         }
-        
+
+        protected int? GetUserId()
+        {
+            var u = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Id)?.Value;
+            if (u == null || !int.TryParse(u, out var uid))
+            {
+                return null;
+            }
+
+            return uid;
+        }
+
+        protected bool GetIsAdmin()
+        {
+            return true;
+        }
+
         [HttpGet]
         [Route("{id:int}")]
         public virtual async Task<ActionResult<IBaseResult<T>>> Get(int id)
         {
             var r = await Repository.Get(id);
-            return r.StatusCodeHint switch
-            {
-                null => r.Success ? Ok(r) : BadRequest(r),
-                _ => StatusCode((int)r.StatusCodeHint.Value, r)
-            };
+            return ResultResponse(r);
         }
         
         [HttpGet]
         [Route("List")]
-        public async Task<ActionResult<IBaseResult<T>>> List()
+        public virtual async Task<ActionResult<IBaseResult<List<T>>>> List()
         {
             var r = await Repository.List();
-            return r.StatusCodeHint switch
-            {
-                null => r.Success ? Ok(r) : BadRequest(r),
-                _ => StatusCode((int)r.StatusCodeHint.Value, r)
-            };
+            return ResultResponse(r);
         }
         
         [HttpPost]
         [Route("")]
         [Authorize]
-        public async Task<ActionResult<IBaseResult<T>>> Post([FromBody] T payload)
+        public virtual async Task<ActionResult<IBaseResult<T>>> Post([FromBody] T payload)
         {
             var r = await Repository.Post(payload);
             return r.StatusCodeHint switch
@@ -56,11 +64,7 @@ namespace int3306.Api.Structures
         public async Task<ActionResult<IBaseResult<T>>> Put(int id, [FromBody] T payload)
         {
             var r = await Repository.Put(id, payload);
-            return r.StatusCodeHint switch
-            {
-                null => r.Success ? Ok(r) : BadRequest(r),
-                _ => StatusCode((int)r.StatusCodeHint.Value, r)
-            };
+            return ResultResponse(r);
         }
         
         [HttpDelete]
@@ -69,6 +73,11 @@ namespace int3306.Api.Structures
         public virtual async Task<ActionResult<IBaseResult<T>>> Delete(int id)
         {
             var r = await Repository.Delete(id);
+            return ResultResponse(r);
+        }
+
+        protected ActionResult<IBaseResult<TE>> ResultResponse<TE>(IBaseResult<TE> r)
+        {
             return r.StatusCodeHint switch
             {
                 null => r.Success ? Ok(r) : BadRequest(r),

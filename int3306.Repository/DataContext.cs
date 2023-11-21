@@ -39,7 +39,11 @@ namespace int3306.Repository
         public DbSet<Product> Product { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserToRole> UserToRole { get; set; }
-        public DbSet<UserToRole> Stock { get; set; }
+        public DbSet<Stock> Stock { get; set; }
+        public DbSet<Cart> Cart { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderDetail> OrderDetail { get; set; }
+        public DbSet<UserAddress> UserAddress { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

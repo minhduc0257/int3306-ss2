@@ -19,10 +19,15 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<IBaseRepository<Product>, ProductRepository>();
             serviceCollection.AddScoped<IBaseRepository<UserPaymentMethod>, UserPaymentMethodRepository>();
             serviceCollection.AddScoped<IBaseRepository<Stock>, StockRepository>();
+            serviceCollection.AddScoped<IBaseRepository<UserAddress>, UserAddressRepository>();
+            serviceCollection.AddScoped<IBaseRepository<Order>, OrderRepository>();
+            serviceCollection.AddScoped<IBaseRepository<OrderDetail>, OrderDetailRepository>();
+            serviceCollection.AddScoped<IBaseRepository<Cart>, CartRepository>();
 
             serviceCollection.AddScoped<UserRepository>();
             serviceCollection.AddScoped<ProductToTagRepository>();
             serviceCollection.AddScoped<ProductRepository>();
+            serviceCollection.AddScoped<CartRepository>();
             return serviceCollection;
         }
     }
