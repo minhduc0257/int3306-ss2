@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using AuthorizationMiddleware = int3306.Api.Middlewares.AuthorizationMiddleware;
 
 DotEnv.Load();
 
@@ -110,6 +111,7 @@ app.Map("/api", app =>
     app.UseRouting();
     app.UseCors();
     app.UseAuthorization();
+    app.UseMiddleware<AuthorizationMiddleware>();
     app.UseEndpoints(endpoints =>
     {
         endpoints.MapControllerRoute(
