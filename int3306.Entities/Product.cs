@@ -43,6 +43,13 @@ namespace int3306.Entities
 
         [NotMapped]
         public virtual List<ProductTag> ProductTags { get; set; } = new();
+        
+        [JsonProperty("stock")]
+        [JsonIgnore]
+        public virtual List<Stock> Stocks { get; set; } = new();
+        
+        [NotMapped]
+        public int Stock { get; set; }
 #pragma warning restore CS8618
     }
 }

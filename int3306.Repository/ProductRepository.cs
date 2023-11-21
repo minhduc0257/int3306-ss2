@@ -34,10 +34,11 @@ namespace int3306.Repository
         {
             try
             {
-                var a = (IQueryable<Product>) DataContext.GetDbSet<Product>()
+                var a = (IQueryable<Product>)DataContext.GetDbSet<Product>()
                     .Include(product => product.ProductType)
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
-                    .ThenInclude(tag => tag.ProductTag);
+                    .ThenInclude(tag => tag.ProductTag)
+                    .Include(product => product.Stocks.Where(pt => pt.Status > 0));
 
                 if (inUse)
                 {
@@ -48,6 +49,7 @@ namespace int3306.Repository
                 result = result.Select(r =>
                 {
                     r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
+                    r.Stock = r.Stocks.Select(s => s.Count).Sum();
                     return r;
                 }).ToList();
                 return BaseResult<List<Product>>.FromSuccess(result);
@@ -65,7 +67,8 @@ namespace int3306.Repository
                 var query = (IQueryable<Product>)DataContext.GetDbSet<Product>()
                     .Include(product => product.ProductType)
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
-                    .ThenInclude(tag => tag.ProductTag);
+                    .ThenInclude(tag => tag.ProductTag)
+                    .Include(product => product.Stocks.Where(pt => pt.Status > 0));
 
                 if (model.ProductType > 0)
                 {
@@ -90,6 +93,7 @@ namespace int3306.Repository
                 result = result.Select(r =>
                 {
                     r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
+                    r.Stock = r.Stocks.Select(s => s.Count).Sum();
                     return r;
                 }).ToList();
                 return BaseResult<List<Product>>.FromSuccess(result);

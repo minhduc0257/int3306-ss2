@@ -18,6 +18,7 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<IBaseRepository<UserDetail>, UserDetailRepository>();
             serviceCollection.AddScoped<IBaseRepository<Product>, ProductRepository>();
             serviceCollection.AddScoped<IBaseRepository<UserPaymentMethod>, UserPaymentMethodRepository>();
+            serviceCollection.AddScoped<IBaseRepository<Stock>, StockRepository>();
 
             serviceCollection.AddScoped<UserRepository>();
             serviceCollection.AddScoped<ProductToTagRepository>();

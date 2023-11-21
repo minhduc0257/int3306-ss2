@@ -39,7 +39,8 @@ namespace int3306.Repository
         public DbSet<Product> Product { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserToRole> UserToRole { get; set; }
-        
+        public DbSet<UserToRole> Stock { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(b => b.Id).ValueGeneratedOnAdd();
@@ -53,6 +54,11 @@ namespace int3306.Repository
                 .HasOne(u => u.User)
                 .WithMany(u => u.UserToRoles)
                 .HasForeignKey(ur => ur.UserId);
+            
+            modelBuilder.Entity<Stock>()
+                .HasOne(pt => pt.Product)
+                .WithMany(pt => pt.Stocks)
+                .HasForeignKey(pt => pt.ProductId);
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
