@@ -43,6 +43,7 @@ namespace int3306.Api.Controllers
             return ResultResponse(res);
         }
 
+        [HttpGet]
         [RequirePermission(PermissionIndex.Admin)]
         [Route("ListAll")]
         public async Task<ActionResult<IBaseResult<List<Order>>>> ListAll()
