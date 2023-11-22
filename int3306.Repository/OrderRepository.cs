@@ -29,6 +29,7 @@ namespace int3306.Repository
 
                 var orderDetails = carts.Select(c =>
                 {
+                    c.Status = -1;
                     var price = (c.Product?.Price ?? 0) * c.Count;
                     return new OrderDetail
                     {
