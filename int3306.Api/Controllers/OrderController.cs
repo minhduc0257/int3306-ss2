@@ -13,9 +13,11 @@ namespace int3306.Api.Controllers
     public class OrderController : BaseController<Order>
     {
         private readonly CartRepository cartRepository;
-        public OrderController(IBaseRepository<Order> repository, CartRepository cartRepository) : base(repository)
+        private readonly OrderRepository orderRepository;
+        public OrderController(OrderRepository repository, CartRepository cartRepository) : base(repository)
         {
             this.cartRepository = cartRepository;
+            orderRepository = repository;
         }
 
         public override async Task<ActionResult<IBaseResult<Order>>> Post(Order payload)
@@ -33,6 +35,19 @@ namespace int3306.Api.Controllers
             }
             
             return await base.Post(payload);
+        }
+
+        public override async Task<ActionResult<IBaseResult<List<Order>>>> List()
+        {
+            var res = await orderRepository.ListByUserId(GetUserId()!.Value);
+            return ResultResponse(res);
+        }
+
+        [RequirePermission(PermissionIndex.Admin)]
+        [Route("ListAll")]
+        public async Task<ActionResult<IBaseResult<List<Order>>>> ListAll()
+        {
+            return await base.List();
         }
     }
 }

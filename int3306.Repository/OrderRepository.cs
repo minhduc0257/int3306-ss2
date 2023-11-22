@@ -53,5 +53,23 @@ namespace int3306.Repository
                 return BaseResult<int>.FromError(e.ToString());
             }
         }
+
+        public async Task<IBaseResult<List<Order>>> ListByUserId(int userId)
+        {
+            try
+            {
+                var a = (IQueryable<Order>) DataContext.GetDbSet<Order>();
+                a = a
+                    .Where(entity => entity.Status > 0)
+                    .Where(entity => entity.UserId == userId);
+
+                var result = await a.ToListAsync();
+                return BaseResult<List<Order>>.FromSuccess(result);
+            }
+            catch (Exception e)
+            {
+                return BaseResult<List<Order>>.FromError(e.ToString());
+            }
+        }
     }
 }
