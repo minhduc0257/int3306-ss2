@@ -10,6 +10,9 @@ namespace int3306.Entities
         [Key]
         public int Id { get; set; }
         public int Status { get; set; } = 1;
+
+        [Column("user_id")]
+        public int UserId { get; set; }
         
         [Column("card_expiry")]
         public DateTimeOffset Expiry { get; set; }

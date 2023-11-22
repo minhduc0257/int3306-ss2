@@ -36,7 +36,6 @@ namespace int3306.Api.Controllers
             return await base.Post(payload);
         }
 
-        [RequirePermission(PermissionIndex.Admin)]
         public override async Task<ActionResult<IBaseResult<List<Cart>>>> List()
         {
             var res = await cartRepository.ListByUserId(GetUserId()!.Value);
