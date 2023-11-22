@@ -7,7 +7,7 @@ namespace int3306.Entities
     public class UserAddress : IBaseEntity
     {
         public int Id { get; set; }
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
 
         [Column("phone_number")]
         public string PhoneNumber { get; set; } = "";

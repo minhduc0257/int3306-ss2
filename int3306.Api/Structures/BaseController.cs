@@ -61,7 +61,7 @@ namespace int3306.Api.Structures
         [HttpPut]
         [Route("{id:int}")]
         [Authorize]
-        public async Task<ActionResult<IBaseResult<T>>> Put(int id, [FromBody] T payload)
+        public virtual async Task<ActionResult<IBaseResult<T>>> Put(int id, [FromBody] T payload)
         {
             var r = await Repository.Put(id, payload);
             return ResultResponse(r);

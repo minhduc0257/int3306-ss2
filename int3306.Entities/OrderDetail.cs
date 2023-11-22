@@ -8,7 +8,7 @@ namespace int3306.Entities
     public class OrderDetail : IBaseEntity
     {
         public int Id { get; set; }
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
         
         [Column("order_id")]
         public int OrderId { get; set; }

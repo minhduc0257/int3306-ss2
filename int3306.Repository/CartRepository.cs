@@ -14,6 +14,16 @@ namespace int3306.Repository
             return base.Post(entity);
         }
 
+        public async Task<bool> ContainExistentId(List<int> ids)
+        {
+            var a = (IQueryable<Cart>) DataContext.GetDbSet<Cart>();
+            var r = await a
+                .Where(a => a.Status > 0)
+                .CountAsync(a => ids.Contains(a.Id));
+
+            return ids.Count == r;
+        }
+        
         public async Task<IBaseResult<List<Cart>>> ListByUserId(int userId)
         {
             try

@@ -8,7 +8,7 @@ namespace int3306.Entities
     public class Cart : IBaseEntity
     {
         public int Id { get; set; }
-        public int Status { get; set; }
+        public int Status { get; set; } = 1;
         
         [Column("user_id")]
         public int UserId { get; set; }

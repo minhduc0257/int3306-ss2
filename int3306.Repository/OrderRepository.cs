@@ -1,5 +1,6 @@
 using int3306.Entities;
 using int3306.Repository.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace int3306.Repository
 {
@@ -11,19 +12,36 @@ namespace int3306.Repository
         {
             try
             {
+                var cartDb = DataContext.GetDbSet<Cart>();
+                var carts = await cartDb
+                    .Include(c => c.Product)
+                    .Where(cart => entity.CartId!.Contains(cart.Id))
+                    .ToListAsync();
+
                 await DataContext.Database.BeginTransactionAsync();
                 var orderDb = DataContext.GetDbSet<Order>();
                 var orderDetailDb = DataContext.GetDbSet<OrderDetail>();
+                entity.Timestamp = DateTime.Now;
                 entity.Id = 0;
                 entity.Status = 1;
                 var entry = await orderDb.AddAsync(entity);
                 await DataContext.SaveChangesAsync();
 
-                foreach (var detail in entity.OrderDetails)
+                var orderDetails = carts.Select(c =>
                 {
-                    detail.OrderId = entity.Id;
-                }
-                await orderDetailDb.AddRangeAsync(entity.OrderDetails);
+                    var price = (c.Product?.Price ?? 0) * c.Count;
+                    return new OrderDetail
+                    {
+                        Count = c.Count,
+                        OrderId = entity.Id,
+                        ProductId = c.ProductId,
+                        TotalPrice = price
+                    };
+                }).ToList();
+                entity.TotalPrice = orderDetails.Select(d => d.TotalPrice).Sum();
+                    
+                await orderDetailDb.AddRangeAsync(orderDetails);
+                await DataContext.SaveChangesAsync();
 
                 await DataContext.Database.CommitTransactionAsync();
 
