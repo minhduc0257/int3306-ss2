@@ -28,6 +28,7 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<ProductToTagRepository>();
             serviceCollection.AddScoped<ProductRepository>();
             serviceCollection.AddScoped<CartRepository>();
+            serviceCollection.AddScoped<UserPaymentMethodRepository>();
             return serviceCollection;
         }
     }

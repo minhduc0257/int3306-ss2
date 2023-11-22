@@ -4,6 +4,7 @@ using int3306.Entities.Shared;
 
 namespace int3306.Entities
 {
+    [Table("user_payment_method")]
     public class UserPaymentMethod : IBaseEntity
     {
 #pragma warning disable CS8618
