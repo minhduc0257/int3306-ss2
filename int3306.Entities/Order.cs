@@ -25,7 +25,6 @@ namespace int3306.Entities
         public int TotalPrice {get;set;}
         
         [JsonProperty("detail")]
-        [JsonIgnore]
         public virtual List<OrderDetail> OrderDetails { get; set; } = new();
     }
 }
