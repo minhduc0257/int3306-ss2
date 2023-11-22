@@ -22,6 +22,14 @@ namespace int3306.Api.Controllers
         {
             return ResultResponse(await repository.ListByUserId(GetUserId()!.Value));
         }
+        
+        [HttpGet]
+        [RequirePermission(PermissionIndex.Admin)]
+        [Route("ListAll")]
+        public async Task<ActionResult<IBaseResult<List<UserPaymentMethod>>>> ListAll()
+        {
+            return await base.List();
+        }
 
         public override Task<ActionResult<IBaseResult<UserPaymentMethod>>> Post(UserPaymentMethod payload)
         {
