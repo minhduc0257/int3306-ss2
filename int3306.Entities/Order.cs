@@ -32,5 +32,8 @@ namespace int3306.Entities
         [JsonProperty("cart_id")]
         [NotMapped]
         public List<int>? CartId { get; set; } = new();
+        
+        [Column("rating")]
+        public int Rating {get;set;}
     }
 }

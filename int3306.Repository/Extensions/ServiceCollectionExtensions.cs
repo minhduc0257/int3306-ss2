@@ -23,6 +23,7 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<IBaseRepository<Order>, OrderRepository>();
             serviceCollection.AddScoped<IBaseRepository<OrderDetail>, OrderDetailRepository>();
             serviceCollection.AddScoped<IBaseRepository<Cart>, CartRepository>();
+            serviceCollection.AddScoped<IBaseRepository<ProductThumbnail>, ProductThumbnailRepository>();
 
             serviceCollection.AddScoped<UserRepository>();
             serviceCollection.AddScoped<ProductTypeRepository>();
@@ -36,6 +37,7 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<OrderRepository>();
             serviceCollection.AddScoped<OrderDetailRepository>();
             serviceCollection.AddScoped<CartRepository>();
+            serviceCollection.AddScoped<ProductThumbnailRepository>();
             return serviceCollection;
         }
     }
