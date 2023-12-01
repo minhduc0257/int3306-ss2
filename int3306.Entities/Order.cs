@@ -19,8 +19,16 @@ namespace int3306.Entities
         [Column("user_address_id")]
         public int UserAddressId {get;set;}
         
+        [JsonProperty("user_address")] 
+        [ForeignKey("UserAddressId")]
+        public virtual UserAddress? UserAddress {get; set; }
+        
         [Column("user_payment_method_id")]
         public int UserPaymentMethodId {get;set;}
+        
+        [JsonProperty("user_payment_method")] 
+        [ForeignKey("UserPaymentMethodId")]
+        public virtual UserPaymentMethod? UserPaymentMethod {get; set; }
         
         [Column("total_price")]
         public int TotalPrice {get;set;}

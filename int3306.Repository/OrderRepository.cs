@@ -6,7 +6,25 @@ namespace int3306.Repository
 {
     public class OrderRepository : BaseRepository<Order>
     {
-        public OrderRepository(DataContext dataContext) : base(dataContext) {}
+        public OrderRepository(DataContext dataContext) : base(dataContext)
+        {
+        }
+
+        public override async Task<IBaseResult<Order>> Get(int id)
+        {
+            try
+            {
+                var r = await DataContext.GetDbSet<Order>()
+                    .Include(e => e.UserAddress)
+                    .Include(e => e.UserPaymentMethod)
+                    .FirstOrDefaultAsync(e => e.Id == id);
+                return r != null ? BaseResult<Order>.FromSuccess(r) : BaseResult<Order>.FromNotFound();
+            }
+            catch (Exception e)
+            {
+                return BaseResult<Order>.FromError(e.ToString());
+            }
+        }
 
         public override async Task<IBaseResult<int>> Post(Order entity)
         {
@@ -40,7 +58,7 @@ namespace int3306.Repository
                     };
                 }).ToList();
                 entity.TotalPrice = orderDetails.Select(d => d.TotalPrice).Sum();
-                    
+
                 await orderDetailDb.AddRangeAsync(orderDetails);
                 await DataContext.SaveChangesAsync();
 
@@ -59,7 +77,7 @@ namespace int3306.Repository
         {
             try
             {
-                var a = (IQueryable<Order>) DataContext.GetDbSet<Order>();
+                var a = (IQueryable<Order>)DataContext.GetDbSet<Order>();
                 a = a
                     .Where(entity => entity.Status > 0)
                     .Where(entity => entity.UserId == userId);
