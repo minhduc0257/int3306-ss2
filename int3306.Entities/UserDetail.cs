@@ -27,6 +27,9 @@ namespace int3306.Entities
         
         [Column("phone_number")]
         public string PhoneNumber { get; set; } = "";
+
+        [Column("avatar_url")]
+        public string AvatarUrl { get; set; } = "";
 #pragma warning restore CS8618
     }
 }
