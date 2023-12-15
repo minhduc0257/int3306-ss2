@@ -13,6 +13,9 @@ namespace int3306.Entities
         public int ProductId { get; set; }
 
         [Column("url")] 
-        public string Url { get; set; } = ""; // Chen anh j vo bay giooo
+        public string Url { get; set; } = "";
+
+        [Column("priority")]
+        public int Priority { get; set; } = 1;
     }
 }
