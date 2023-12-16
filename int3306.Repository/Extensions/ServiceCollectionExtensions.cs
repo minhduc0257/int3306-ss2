@@ -24,6 +24,9 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<IBaseRepository<OrderDetail>, OrderDetailRepository>();
             serviceCollection.AddScoped<IBaseRepository<Cart>, CartRepository>();
             serviceCollection.AddScoped<IBaseRepository<ProductThumbnail>, ProductThumbnailRepository>();
+            serviceCollection.AddScoped<IBaseRepository<ProductVariant>, ProductVariantRepository>();
+            serviceCollection.AddScoped<IBaseRepository<ProductVariantValue>, ProductVariantValuesRepository>();
+            serviceCollection.AddScoped<IBaseRepository<OrderDetailVariant>, OrderDetailVariantRepository>();
 
             serviceCollection.AddScoped<UserRepository>();
             serviceCollection.AddScoped<ProductTypeRepository>();
@@ -38,6 +41,9 @@ namespace int3306.Repository.Extensions
             serviceCollection.AddScoped<OrderDetailRepository>();
             serviceCollection.AddScoped<CartRepository>();
             serviceCollection.AddScoped<ProductThumbnailRepository>();
+            serviceCollection.AddScoped<ProductVariantRepository>();
+            serviceCollection.AddScoped<ProductVariantValuesRepository>();
+            serviceCollection.AddScoped<OrderDetailVariantRepository>();
             return serviceCollection;
         }
     }

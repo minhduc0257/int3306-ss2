@@ -46,6 +46,9 @@ namespace int3306.Repository
         public DbSet<UserAddress> UserAddress { get; set; }
         public DbSet<UserPaymentMethod> UserPaymentMethod { get; set; }
         public DbSet<ProductThumbnail> ProductThumbnail { get; set; }
+        public DbSet<OrderDetailVariant> OrderDetailVariant { get; set; }
+        public DbSet<ProductVariant> ProductVariant { get; set; }
+        public DbSet<ProductVariantValue> ProductVariantValue { get; set; }
         
         // for FromSql
         public DbSet<ProductExtended> ProductRating { get; set; }
