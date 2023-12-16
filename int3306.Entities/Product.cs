@@ -12,7 +12,7 @@ namespace int3306.Entities
         [Key]
         public int Id { get; set; }
         public int Status { get; set; } = 1;
-        
+
         [Column("product_type_id")]
         public int? ProductTypeId { get; set; }
         
@@ -32,12 +32,10 @@ namespace int3306.Entities
         public int PlantingDuration { get; set; }
 
         public int Price { get; set; }
-        
-        [JsonProperty("product_type")]
+
         [ForeignKey(nameof(ProductTypeId))]
         public virtual ProductType? ProductType { get; set; }
-        
-        [JsonProperty("product_tags")]
+
         [JsonIgnore]
         public virtual List<ProductToTag> ProductToTags { get; set; } = new();
 
@@ -48,7 +46,7 @@ namespace int3306.Entities
         [JsonIgnore]
         public virtual List<Stock> Stocks { get; set; } = new();
 
-        [JsonProperty("product_thumbnail")]
+
         public virtual List<ProductThumbnail> ProductThumbnails { get; set; } = new();
         
         [NotMapped]
