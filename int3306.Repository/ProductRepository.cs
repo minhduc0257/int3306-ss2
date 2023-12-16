@@ -17,10 +17,18 @@ namespace int3306.Repository
                     .Include(product => product.ProductType)
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag)
+                    .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
                     .FirstOrDefaultAsync(e => e.Id == id);
                 if (r != null)
                 {
                     r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
+
+                    var rating = DataContext.GetDbSet<OrderDetail>()
+                        .Where(p => p.ProductId == r.Id)
+                        .Select(d => d.Rating)
+                        .AverageAsync();
+
+                    r.Rating = (float) await rating;
                 }
                 return r != null ? BaseResult<Product>.FromSuccess(r) : BaseResult<Product>.FromNotFound();
             }
@@ -34,10 +42,22 @@ namespace int3306.Repository
         {
             try
             {
+                var ratingQuery = DataContext.ProductRating
+                    .FromSqlRaw($"""
+                                 select product_id, rating from
+                                 (
+                                     select product_id, AVG(rating) as rating from order_detail
+                                     group by product_id
+                                 ) pr
+                                     join `products` p
+                                          on p.id = pr.product_id
+                                 """ + (inUse ? " where p.status > 0" : ""));
+                
                 var a = (IQueryable<Product>)DataContext.GetDbSet<Product>()
                     .Include(product => product.ProductType)
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag)
+                    .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
                     .Include(product => product.Stocks.Where(pt => pt.Status > 0));
 
                 if (inUse)
@@ -46,10 +66,12 @@ namespace int3306.Repository
                 }
 
                 var result = await a.ToListAsync();
+                var rating = await ratingQuery.ToDictionaryAsync(pair => pair.ProductId, pair => pair.Rating);
                 result = result.Select(r =>
                 {
                     r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
                     r.Stock = r.Stocks.Select(s => s.Count).Sum();
+                    r.Rating = rating.GetValueOrDefault(r.Id, 0);
                     return r;
                 }).ToList();
                 return BaseResult<List<Product>>.FromSuccess(result);

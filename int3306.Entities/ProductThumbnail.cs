@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using int3306.Entities.Shared;
+using Newtonsoft.Json;
 
 namespace int3306.Entities
 {
@@ -17,5 +18,10 @@ namespace int3306.Entities
 
         [Column("priority")]
         public int Priority { get; set; } = 1;
+        
+        [JsonProperty("product")]
+        [JsonIgnore]
+        [ForeignKey(nameof(ProductId))]
+        public virtual Product? Product { get; set; }
     }
 }

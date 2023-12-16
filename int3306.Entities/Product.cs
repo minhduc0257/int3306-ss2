@@ -47,9 +47,15 @@ namespace int3306.Entities
         [JsonProperty("stock")]
         [JsonIgnore]
         public virtual List<Stock> Stocks { get; set; } = new();
+
+        [JsonProperty("product_thumbnail")]
+        public virtual List<ProductThumbnail> ProductThumbnails { get; set; } = new();
         
         [NotMapped]
         public int Stock { get; set; }
+
+        [NotMapped]
+        public float Rating { get; set; }
 #pragma warning restore CS8618
     }
 }

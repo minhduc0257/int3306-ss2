@@ -20,6 +20,9 @@ namespace int3306.Entities
         
         [Column("total_price")]
         public int TotalPrice { get; set; }
+
+        [Column("rating")]
+        public int Rating {get;set;}
         
         [JsonIgnore]
         [JsonProperty("product")]

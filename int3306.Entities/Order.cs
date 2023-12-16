@@ -22,6 +22,10 @@ namespace int3306.Entities
         [Column("user_payment_method_id")]
         public int UserPaymentMethodId {get;set;}
         
+        [JsonProperty("user_payment_method")]
+        [ForeignKey("UserPaymentMethodId")]
+        public virtual UserPaymentMethod? UserPaymentMethod { get; set; }
+        
         [Column("total_price")]
         public int TotalPrice {get;set;}
         
@@ -32,8 +36,5 @@ namespace int3306.Entities
         [JsonProperty("cart_id")]
         [NotMapped]
         public List<int>? CartId { get; set; } = new();
-        
-        [Column("rating")]
-        public int Rating {get;set;}
     }
 }

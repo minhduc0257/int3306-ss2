@@ -46,6 +46,9 @@ namespace int3306.Repository
         public DbSet<UserAddress> UserAddress { get; set; }
         public DbSet<UserPaymentMethod> UserPaymentMethod { get; set; }
         public DbSet<ProductThumbnail> ProductThumbnail { get; set; }
+        
+        // for FromSql
+        public DbSet<ProductExtended> ProductRating { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
