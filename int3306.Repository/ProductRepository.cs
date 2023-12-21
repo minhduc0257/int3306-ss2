@@ -18,17 +18,19 @@ namespace int3306.Repository
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag)
                     .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
+                    .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
+                    .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0))
                     .FirstOrDefaultAsync(e => e.Id == id);
                 if (r != null)
                 {
                     r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
 
-                    var rating = DataContext.GetDbSet<OrderDetail>()
+                    var rating = await DataContext.GetDbSet<OrderDetail>()
                         .Where(p => p.ProductId == r.Id)
                         .Select(d => d.Rating)
-                        .AverageAsync();
+                        .ToListAsync();
 
-                    r.Rating = (float) await rating;
+                    r.Rating = rating.Count == 0 ? 0 : (float)rating.Average();
                 }
                 return r != null ? BaseResult<Product>.FromSuccess(r) : BaseResult<Product>.FromNotFound();
             }
@@ -43,22 +45,24 @@ namespace int3306.Repository
             try
             {
                 var ratingQuery = DataContext.ProductRating
-                    .FromSqlRaw($"""
-                                 select product_id, rating from
-                                 (
-                                     select product_id, AVG(rating) as rating from order_detail
-                                     group by product_id
-                                 ) pr
-                                     join `products` p
-                                          on p.id = pr.product_id
-                                 """ + (inUse ? " where p.status > 0" : ""));
+                    .FromSqlRaw("""
+                                select product_id, rating from
+                                (
+                                    select product_id, AVG(rating) as rating from order_detail
+                                    group by product_id
+                                ) pr
+                                    join `products` p
+                                         on p.id = pr.product_id
+                                """ + (inUse ? " where p.status > 0" : ""));
                 
                 var a = (IQueryable<Product>)DataContext.GetDbSet<Product>()
                     .Include(product => product.ProductType)
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag)
                     .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
-                    .Include(product => product.Stocks.Where(pt => pt.Status > 0));
+                    .Include(product => product.Stocks.Where(pt => pt.Status > 0))
+                    .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
+                    .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0));
 
                 if (inUse)
                 {
@@ -90,7 +94,10 @@ namespace int3306.Repository
                     .Include(product => product.ProductType)
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag)
-                    .Include(product => product.Stocks.Where(pt => pt.Status > 0));
+                    .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
+                    .Include(product => product.Stocks.Where(pt => pt.Status > 0))
+                    .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
+                    .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0));
 
                 if (model.ProductType > 0)
                 {
