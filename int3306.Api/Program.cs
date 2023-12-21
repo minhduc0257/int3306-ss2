@@ -8,6 +8,7 @@ using int3306.Repository.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using AuthorizationMiddleware = int3306.Api.Middlewares.AuthorizationMiddleware;
@@ -18,6 +19,9 @@ if (int.TryParse(Environment.GetEnvironmentVariable("PORT") ?? "5000", out var p
 {
     port = 5000;
 }
+
+var path = Environment.GetEnvironmentVariable("STATIC_PATH");
+
 var jwtOptions = new JwtOptions
 {
     Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "audience",
@@ -119,5 +123,13 @@ app.Map("/api", app =>
             pattern: "{controller}/{action=Index}/{id?}");
     });
 });
+if (path != null)
+{
+    app.UseSpaStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(path)
+    });   
+    app.Logger.LogWarning("Serving static files from {path}", path);
+}
 
 app.Run($"http://0.0.0.0:{port}");
