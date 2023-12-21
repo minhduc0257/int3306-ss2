@@ -46,7 +46,7 @@ namespace int3306.Entities
         [JsonIgnore]
         public virtual List<Stock> Stocks { get; set; } = new();
 
-
+        public virtual List<ProductVariant> ProductVariants { get; set; } = new();
         public virtual List<ProductThumbnail> ProductThumbnails { get; set; } = new();
         
         [NotMapped]

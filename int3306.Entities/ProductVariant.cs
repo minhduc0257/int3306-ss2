@@ -3,6 +3,7 @@ using int3306.Entities.Shared;
 
 namespace int3306.Entities
 {
+    [Table("product_variant")]
     public class ProductVariant : IBaseEntity
     {
         public int Id { get; set; }
@@ -12,6 +13,9 @@ namespace int3306.Entities
         public int ProductId { get; set; }
 
         public string Name { get; set; } = "";
+        
+        [ForeignKey(nameof(ProductId))]
+        public virtual Product? Product { get; set; }
         
         public virtual List<ProductVariantValue> ProductVariantValues { get; set; } = new();
     }

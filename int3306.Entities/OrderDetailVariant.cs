@@ -3,6 +3,7 @@ using int3306.Entities.Shared;
 
 namespace int3306.Entities
 {
+    [Table("order_detail_variant")]
     public class OrderDetailVariant : IBaseEntity
     {
         public int Id { get; set; }
