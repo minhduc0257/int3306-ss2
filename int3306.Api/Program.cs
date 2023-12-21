@@ -102,6 +102,14 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
     options.ClaimsIssuer = jwtOptions.Issuer;
     options.TokenValidationParameters = tokenValidationParameters;
 });
+if (path != null)
+{
+    builder.Services.AddSpaStaticFiles(
+        configuration =>
+        {
+            configuration.RootPath = path;
+        });
+}
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -125,10 +133,12 @@ app.Map("/api", app =>
 });
 if (path != null)
 {
+    app.UseDefaultFiles();
     app.UseSpaStaticFiles(new StaticFileOptions
     {
         FileProvider = new PhysicalFileProvider(path)
-    });   
+    });
+    app.UseSpa(spa => {});
     app.Logger.LogWarning("Serving static files from {path}", path);
 }
 
