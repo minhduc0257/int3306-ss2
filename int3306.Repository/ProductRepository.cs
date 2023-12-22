@@ -90,8 +90,14 @@ namespace int3306.Repository
         {
             try
             {
-                var query = (IQueryable<Product>)DataContext.GetDbSet<Product>()
-                    .Include(product => product.ProductType)
+                var query = (IQueryable<Product>)DataContext.GetDbSet<Product>();
+                if (!string.IsNullOrWhiteSpace(model.Query))
+                {
+                    query = DataContext.GetDbSet<Product>()
+                        .FromSql($"select * from products where name LIKE {"%" + model.Query + "%"}");
+                }
+                    
+                query = query.Include(product => product.ProductType)
                     .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
                     .ThenInclude(tag => tag.ProductTag)
                     .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
@@ -131,8 +137,6 @@ namespace int3306.Repository
             {
                 return BaseResult<List<Product>>.FromError(e.ToString());
             }
-            
-            
         }
     }
 }

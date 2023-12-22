@@ -2,6 +2,8 @@ namespace int3306.Repository.Models
 {
     public class ProductSearchModel
     {
+        public string? Query { get; set; } = null;
+        
         public int? ProductType { get; set; } = null;
         public List<int>? ProductTags { get; set; } = new();
 
