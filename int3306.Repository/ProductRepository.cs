@@ -20,6 +20,8 @@ namespace int3306.Repository
                     .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
                     .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
                     .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0))
+                    .Include(product => product.Stocks.Where(pt => pt.Status > 0))
+                    .AsSplitQuery()
                     .FirstOrDefaultAsync(e => e.Id == id);
                 if (r != null)
                 {
@@ -31,6 +33,7 @@ namespace int3306.Repository
                         .ToListAsync();
 
                     r.Rating = rating.Count == 0 ? 0 : (float)rating.Average();
+                    r.Stock = r.Stocks.Count == 0 ? 0 : r.Stocks.Select(s => s.Count).Sum();
                 }
                 return r != null ? BaseResult<Product>.FromSuccess(r) : BaseResult<Product>.FromNotFound();
             }
@@ -69,6 +72,7 @@ namespace int3306.Repository
                     a = a.Where(entity => entity.Status > 0);
                 }
 
+                a = a.AsSplitQuery();
                 var result = await a.ToListAsync();
                 var rating = await ratingQuery.ToDictionaryAsync(pair => pair.ProductId, pair => pair.Rating);
                 result = result.Select(r =>
@@ -123,6 +127,7 @@ namespace int3306.Repository
                 if (model.GrowingSeasonMax.HasValue) query = query.Where(q => q.GrowingSeason <= model.GrowingSeasonMax);
 
                 query = query.Where(p => p.Status > 0);
+                query = query.AsSplitQuery();
                 
                 var result = await query.ToListAsync();
                 result = result.Select(r =>

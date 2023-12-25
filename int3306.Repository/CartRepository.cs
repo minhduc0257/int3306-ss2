@@ -8,10 +8,40 @@ namespace int3306.Repository
     {
         public CartRepository(DataContext dataContext) : base(dataContext) {}
 
-        public override Task<IBaseResult<int>> Post(Cart entity)
+        public override async Task<IBaseResult<int>> Post(Cart entity)
         {
             entity.Added = DateTime.Now;
-            return base.Post(entity);
+            var db = DataContext.GetDbSet<Cart>();
+            try
+            {
+                await DataContext.Database.BeginTransactionAsync();
+
+                var existing = await db
+                    .Where(c => c.Status > 0 && c.ProductId == entity.ProductId && c.UserId == entity.UserId)
+                    .FirstOrDefaultAsync();
+
+                if (existing == null)
+                {
+                    entity.Id = 0;
+                    entity.Status = 1;
+                    await db.AddAsync(entity);
+                    await DataContext.SaveChangesAsync();   
+                }
+                else
+                {
+                    existing.Count += entity.Count;
+                    await DataContext.SaveChangesAsync();
+                }
+
+                await DataContext.Database.CommitTransactionAsync();
+
+                return BaseResult<int>.FromSuccess(entity.Id);
+            }
+            catch (Exception e)
+            {
+                await DataContext.Database.RollbackTransactionAsync();
+                return BaseResult<int>.FromError(e.ToString());
+            }
         }
 
         public async Task<bool> ContainExistentId(List<int> ids)
