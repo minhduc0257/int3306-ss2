@@ -21,10 +21,12 @@ namespace int3306.Entities
         
         [Column("added")]
         public DateTime Added { get; set; }
-        
-        [JsonIgnore]
+
         [JsonProperty("product")]
         [ForeignKey(nameof(ProductId))]
         public virtual Product? Product { get; set; }
+
+        [JsonProperty("variants")]
+        public virtual ICollection<CartVariant> CartVariants { get; set; } = new List<CartVariant>();
     }
 }

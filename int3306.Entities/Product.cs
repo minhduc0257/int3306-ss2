@@ -44,10 +44,10 @@ namespace int3306.Entities
         
         [JsonProperty("stock")]
         [JsonIgnore]
-        public virtual List<Stock> Stocks { get; set; } = new();
+        public virtual ICollection<Stock> Stocks { get; set; } = new List<Stock>();
 
-        public virtual List<ProductVariant> ProductVariants { get; set; } = new();
-        public virtual List<ProductThumbnail> ProductThumbnails { get; set; } = new();
+        public virtual ICollection<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
+        public virtual ICollection<ProductThumbnail> ProductThumbnails { get; set; } = new List<ProductThumbnail>();
         
         [NotMapped]
         public int Stock { get; set; }

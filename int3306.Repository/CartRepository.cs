@@ -63,6 +63,16 @@ namespace int3306.Repository
                     .Where(entity => entity.Status > 0)
                     .Where(entity => entity.UserId == userId);
 
+                a = a
+                    .Include(c => c.Product)
+                    .ThenInclude(
+                        p => p!.ProductThumbnails
+                            .Where(pt => pt.Status > 0)
+                            .OrderByDescending(pt => pt.Priority)
+                            .Take(1)
+                    )
+                    .AsSplitQuery();
+
                 var result = await a.ToListAsync();
                 return BaseResult<List<Cart>>.FromSuccess(result);
             }
