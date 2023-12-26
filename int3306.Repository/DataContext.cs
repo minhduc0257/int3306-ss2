@@ -49,6 +49,7 @@ namespace int3306.Repository
         public DbSet<OrderDetailVariant> OrderDetailVariant { get; set; }
         public DbSet<ProductVariant> ProductVariant { get; set; }
         public DbSet<ProductVariantValue> ProductVariantValue { get; set; }
+        public DbSet<CartVariant> CartVariant { get; set; }
         
         // for FromSql
         public DbSet<ProductExtended> ProductRating { get; set; }
