@@ -67,16 +67,11 @@ namespace int3306.Repository
                 .HasOne(u => u.User)
                 .WithMany(u => u.UserToRoles)
                 .HasForeignKey(ur => ur.UserId);
-            
-            modelBuilder.Entity<Stock>()
-                .HasOne(pt => pt.Product)
-                .WithMany(pt => pt.Stocks)
-                .HasForeignKey(pt => pt.ProductId);
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLazyLoadingProxies();
+            
         }
         
 #pragma warning restore CS8618
