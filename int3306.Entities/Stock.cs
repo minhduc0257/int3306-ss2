@@ -16,10 +16,11 @@ namespace int3306.Entities
         [Column("last_modified")]
         public DateTime LastModified { get; set; }
         public int Count { get; set; }
+        public string Description { get; set; } = "";
         
-        [JsonIgnore]
+
         [JsonProperty("product")]
         [ForeignKey(nameof(ProductId))]
-        public virtual Product Product { get; set; }
+        public virtual Product? Product { get; set; }
     }
 }

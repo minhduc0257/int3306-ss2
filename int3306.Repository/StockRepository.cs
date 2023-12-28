@@ -20,6 +20,28 @@ namespace int3306.Repository
             return base.Post(entity);
         }
 
+
+        public override async Task<IBaseResult<List<Stock>>> List(bool inUse = true)
+        {
+            try
+            {
+                var a = (IQueryable<Stock>) DataContext.GetDbSet<Stock>()
+                    .Include(s => s.Product);
+
+                if (inUse)
+                {
+                    a = a.Where(entity => entity.Status > 0);
+                }
+
+                var result = await a.ToListAsync();
+                return BaseResult<List<Stock>>.FromSuccess(result);
+            }
+            catch (Exception e)
+            {
+                return BaseResult<List<Stock>>.FromError(e.ToString());
+            }
+        }
+
         public override async Task<IBaseResult<Stock>> Delete(int id)
         {
             try
