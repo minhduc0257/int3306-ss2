@@ -16,9 +16,6 @@ namespace int3306.Entities
         [Column("timestamp")]
         public DateTime? Timestamp {get;set;}
         
-        [Column("user_address_id")]
-        public int UserAddressId {get;set;}
-        
         [Column("user_payment_method_id")]
         public int UserPaymentMethodId {get;set;}
         
@@ -30,11 +27,22 @@ namespace int3306.Entities
         public int TotalPrice {get;set;}
         
         [JsonProperty("detail")]
-        public virtual List<OrderDetail> OrderDetails { get; set; } = new();
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
         
         // set this on order creation
         [JsonProperty("cart_id")]
         [NotMapped]
         public List<int>? CartId { get; set; } = new();
+
+        public string Country { get; set; } = "";
+        public string Province { get; set; } = "";
+        public string City { get; set; } = "";
+        public string Ward { get; set; } = "";
+        public string Street { get; set; } = "";
+        public string Extra { get; set; } = "";
+        public string Email { get; set; } = "";
+
+        [Column("phone_number")]
+        public string PhoneNumber { get; set; } = "";
     }
 }

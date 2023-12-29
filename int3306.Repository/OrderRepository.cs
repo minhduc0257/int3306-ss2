@@ -72,5 +72,30 @@ namespace int3306.Repository
                 return BaseResult<List<Order>>.FromError(e.ToString());
             }
         }
+
+        public override async Task<IBaseResult<Order>> Get(int id)
+        {
+            try
+            {
+                var r = await  DataContext.GetDbSet<Order>()
+                    .Include(o => o.OrderDetails)
+                    .ThenInclude(d => d.Product)
+                    
+                    .Include(o => o.OrderDetails)
+                    .ThenInclude(o => o.OrderDetailVariant)
+                    .ThenInclude(v => v.Variant)
+                    
+                    .Include(o => o.OrderDetails)
+                    .ThenInclude(o => o.OrderDetailVariant)
+                    .ThenInclude(v => v.VariantValue)
+                    .AsSplitQuery()
+                    .FirstOrDefaultAsync(e => e.Id == id);
+                return r != null ? BaseResult<Order>.FromSuccess(r) : BaseResult<Order>.FromNotFound();
+            }
+            catch (Exception e)
+            {
+                return BaseResult<Order>.FromError(e.ToString());
+            }
+        }
     }
 }

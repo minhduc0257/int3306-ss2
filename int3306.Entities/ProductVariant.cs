@@ -19,6 +19,6 @@ namespace int3306.Entities
         [JsonIgnore]
         public virtual Product? Product { get; set; }
         
-        public virtual List<ProductVariantValue> ProductVariantValues { get; set; } = new();
+        public virtual ICollection<ProductVariantValue> ProductVariantValues { get; set; } = new List<ProductVariantValue>();
     }
 }

@@ -27,11 +27,15 @@ namespace int3306.Entities
         [JsonIgnore]
         [JsonProperty("product")]
         [ForeignKey(nameof(ProductId))]
-        public virtual Product Product { get; set; }
+        public virtual Product? Product { get; set; }
         
         [JsonIgnore]
         [JsonProperty("order")]
         [ForeignKey(nameof(OrderId))]
-        public virtual Order Order { get; set; }
+        public virtual Order? Order { get; set; }
+
+
+        [JsonProperty("variants")]
+        public virtual ICollection<OrderDetailVariant> OrderDetailVariant { get; set; } = new List<OrderDetailVariant>();
     }
 }

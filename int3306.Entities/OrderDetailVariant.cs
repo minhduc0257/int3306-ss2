@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using int3306.Entities.Shared;
+using Newtonsoft.Json;
 
 namespace int3306.Entities
 {
@@ -18,6 +19,7 @@ namespace int3306.Entities
         [Column("variant_value_id")]
         public int VariantValueId { get; set; }
         
+        [JsonIgnore]
         [ForeignKey(nameof(OrderDetailId))]
         public virtual OrderDetail? OrderDetail { get; set; }
         
