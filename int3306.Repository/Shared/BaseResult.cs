@@ -45,5 +45,16 @@ namespace int3306.Repository.Shared
                 StatusCodeHint = HttpStatusCode.BadRequest
             };
         }
+        
+        public static BaseResult<TNewEntity> IntoError<TNewEntity>(IBaseResult<TEntity> entity)
+        {
+            return new BaseResult<TNewEntity>
+            {
+                Data = default,
+                Success = false,
+                Error = entity.Error,
+                StatusCodeHint = entity.StatusCodeHint
+            };
+        }
     }
 }

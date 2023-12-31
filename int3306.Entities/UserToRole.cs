@@ -16,12 +16,11 @@ namespace int3306.Entities
         [Column("role_id")]
         public int RoleId { get; set; }
         
-        [JsonIgnore]
+
         [JsonProperty("user")]
         [ForeignKey(nameof(UserId))]
         public virtual User? User { get; set; }
-        
-        [JsonIgnore]
+
         [JsonProperty("role")]
         [ForeignKey(nameof(RoleId))]
         public virtual Role? Role { get; set; }
