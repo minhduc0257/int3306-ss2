@@ -37,6 +37,35 @@ namespace int3306.Repository
             return BaseResult<User>.FromSuccess(result);
         }
 
+        public override async Task<IBaseResult<List<User>>> List(bool inUse = true)
+        {
+            try
+            {
+                var a = (IQueryable<User>)DataContext.GetDbSet<User>()
+                    .Include(u => u.Detail)
+                    .Include(u => u.UserToRoles)
+                    .ThenInclude(ur => ur.Role);
+
+                if (inUse)
+                {
+                    a = a.Where(entity => entity.Status > 0);
+                }
+
+                var result = await a.ToListAsync();
+
+                foreach (var r in result)
+                {
+                    r.Roles = r.UserToRoles.Select(r => r.Role!).Where(r => r != null).ToList();
+                }
+                
+                return BaseResult<List<User>>.FromSuccess(result);
+            }
+            catch (Exception e)
+            {
+                return BaseResult<List<User>>.FromError(e.ToString());
+            }
+        }
+
         public async Task<IBaseResult<bool>> Register(string username, string hashedPassword)
         {
             try

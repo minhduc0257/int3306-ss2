@@ -34,10 +34,10 @@ namespace int3306.Entities
 
         [Newtonsoft.Json.JsonIgnore]
         [JsonIgnore]
-        public virtual List<UserToRole> UserToRoles { get; set; } = new();
+        public virtual ICollection<UserToRole> UserToRoles { get; set; } = new List<UserToRole>();
         
         [NotMapped]
-        public virtual List<Role> Roles { get; set; } = new();
+        public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 #pragma warning restore CS8618
     }
 }

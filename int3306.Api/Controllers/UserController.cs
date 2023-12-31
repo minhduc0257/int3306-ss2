@@ -11,14 +11,20 @@ namespace int3306.Api.Controllers
     [ApiController]
     [Authorize]
     [Route("user")]
-    public class UserController : Controller
+    public class UserController : BaseController<User>
     {
         private readonly UserRepository userRepository;
-        public UserController(UserRepository userRepository)
+        public UserController(UserRepository userRepository) : base(userRepository)
         {
             this.userRepository = userRepository;
         }
-        
+
+        public override async Task<ActionResult<IBaseResult<User>>> Get(int id)
+        {
+            var r = await userRepository.GetWithDetail(id);
+            return ResultResponse(r);
+        }
+
         [HttpGet]
         [Route("self")]
         public async Task<ActionResult<BaseResult<User>>> GetSelf()
