@@ -8,6 +8,23 @@ namespace int3306.Repository
     {
         public OrderRepository(DataContext dataContext) : base(dataContext) {}
 
+        private IQueryable<Order> GetBaseJoinedQuery()
+        {
+            return DataContext.GetDbSet<Order>()
+                .Include(o => o.OrderDetails)
+                .ThenInclude(d => d.Product)
+
+                .Include(o => o.OrderDetails)
+                .ThenInclude(o => o.OrderDetailVariant)
+                .ThenInclude(v => v.Variant)
+
+                .Include(o => o.OrderDetails)
+                .ThenInclude(o => o.OrderDetailVariant)
+                .ThenInclude(v => v.VariantValue)
+                .Include(o => o.User)
+                .AsSplitQuery();
+        }
+        
         public override async Task<IBaseResult<int>> Post(Order entity)
         {
             try
@@ -59,12 +76,45 @@ namespace int3306.Repository
         {
             try
             {
-                var a = (IQueryable<Order>) DataContext.GetDbSet<Order>();
-                a = a
+                var a = GetBaseJoinedQuery()
                     .Where(entity => entity.Status > 0)
                     .Where(entity => entity.UserId == userId);
 
                 var result = await a.ToListAsync();
+                foreach (var o in result)
+                {
+                    if (o.User != null)
+                    {
+                        o.User.Password = "";
+                    }
+                }
+                return BaseResult<List<Order>>.FromSuccess(result);
+            }
+            catch (Exception e)
+            {
+                return BaseResult<List<Order>>.FromError(e.ToString());
+            }
+        }
+
+        public override async Task<IBaseResult<List<Order>>> List(bool inUse = true)
+        {
+            try
+            {
+                var a = GetBaseJoinedQuery();
+
+                if (inUse)
+                {
+                    a = a.Where(entity => entity.Status > 0);
+                }
+
+                var result = await a.ToListAsync();
+                foreach (var o in result)
+                {
+                    if (o.User != null)
+                    {
+                        o.User.Password = "";
+                    }
+                }
                 return BaseResult<List<Order>>.FromSuccess(result);
             }
             catch (Exception e)
@@ -77,19 +127,12 @@ namespace int3306.Repository
         {
             try
             {
-                var r = await  DataContext.GetDbSet<Order>()
-                    .Include(o => o.OrderDetails)
-                    .ThenInclude(d => d.Product)
-                    
-                    .Include(o => o.OrderDetails)
-                    .ThenInclude(o => o.OrderDetailVariant)
-                    .ThenInclude(v => v.Variant)
-                    
-                    .Include(o => o.OrderDetails)
-                    .ThenInclude(o => o.OrderDetailVariant)
-                    .ThenInclude(v => v.VariantValue)
-                    .AsSplitQuery()
+                var r = await GetBaseJoinedQuery()
                     .FirstOrDefaultAsync(e => e.Id == id);
+                if (r?.User != null)
+                {
+                    r.User.Password = "";
+                }
                 return r != null ? BaseResult<Order>.FromSuccess(r) : BaseResult<Order>.FromNotFound();
             }
             catch (Exception e)

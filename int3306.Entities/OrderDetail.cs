@@ -23,8 +23,7 @@ namespace int3306.Entities
 
         [Column("rating")]
         public int Rating {get;set;}
-        
-        [JsonIgnore]
+
         [JsonProperty("product")]
         [ForeignKey(nameof(ProductId))]
         public virtual Product? Product { get; set; }

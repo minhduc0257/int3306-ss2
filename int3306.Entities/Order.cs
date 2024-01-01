@@ -27,7 +27,7 @@ namespace int3306.Entities
         public int TotalPrice {get;set;}
         
         [JsonProperty("detail")]
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        public virtual ICollection<OrderDetail>? OrderDetails { get; set; } = new List<OrderDetail>();
         
         // set this on order creation
         [JsonProperty("cart_id")]
@@ -44,5 +44,8 @@ namespace int3306.Entities
 
         [Column("phone_number")]
         public string PhoneNumber { get; set; } = "";
+        
+        [ForeignKey(nameof(UserId))]
+        public virtual User? User { get; set; }
     }
 }
