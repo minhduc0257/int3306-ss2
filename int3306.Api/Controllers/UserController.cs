@@ -5,6 +5,7 @@ using int3306.Repository;
 using int3306.Repository.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BC = BCrypt.Net.BCrypt;
 
 namespace int3306.Api.Controllers
 {
@@ -19,6 +20,17 @@ namespace int3306.Api.Controllers
         {
             this.userRepository = userRepository;
             this.userToRoleRepository = userToRoleRepository;
+        }
+
+        public override Task<ActionResult<IBaseResult<User>>> Put(int id, User payload)
+        {
+            if (!string.IsNullOrWhiteSpace(payload.Password))
+            {
+                var password = payload.Password;
+                var hash = BC.HashPassword(password);
+                payload.Password = hash;
+            }
+            return base.Put(id, payload);
         }
 
         public override async Task<ActionResult<IBaseResult<User>>> Get(int id)

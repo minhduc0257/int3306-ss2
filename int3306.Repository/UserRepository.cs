@@ -16,6 +16,17 @@ namespace int3306.Repository
             return await result;
         }
 
+        public override async Task<IBaseResult<User>> Get(int id)
+        {
+            var r = await base.Get(id);
+            if (r is { Success: true, Data: not null })
+            {
+                r.Data.Password = "";
+            }
+
+            return r;
+        }
+
         public async Task<IBaseResult<User>> GetWithDetail(int id)
         {
             var db = DataContext.GetDbSet<User>();
@@ -32,6 +43,7 @@ namespace int3306.Repository
 
 #pragma warning disable CS8619
             result.Roles = (List<Role>) result.UserToRoles.Select(r => r.Role).Where(r => r != null).ToList();
+            result.Password = "";
 #pragma warning restore CS8619
             
             return BaseResult<User>.FromSuccess(result);
@@ -56,6 +68,7 @@ namespace int3306.Repository
                 foreach (var r in result)
                 {
                     r.Roles = r.UserToRoles.Select(r => r.Role!).Where(r => r != null).ToList();
+                    r.Password = "";
                 }
                 
                 return BaseResult<List<User>>.FromSuccess(result);
@@ -66,7 +79,7 @@ namespace int3306.Repository
             }
         }
 
-        public async Task<IBaseResult<bool>> Register(string username, string hashedPassword)
+        public async Task<IBaseResult<bool>> Register(string username, string hashedPassword, string name)
         {
             try
             {
@@ -74,7 +87,7 @@ namespace int3306.Repository
                 {
                     CreationTime = DateTimeOffset.Now,
                     Id = 0,
-                    Name = username,
+                    Name = string.IsNullOrWhiteSpace(name) ? username : name,
                     Username = username,
                     Password = hashedPassword
                 };

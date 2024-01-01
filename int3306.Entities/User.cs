@@ -18,9 +18,7 @@ namespace int3306.Entities
         
         [Column("username")]
         public string Username { get; set; }
-        
-        [Newtonsoft.Json.JsonIgnore]
-        [JsonIgnore]
+
         [Column("password")]
         public string Password { get; set; }
         

@@ -38,7 +38,7 @@ namespace int3306.Api.Controllers
                 return Conflict(BaseResult<bool>.FromError("Username already exists!"));
             }
 
-            var result = await userRepository.Register(credentials.Username, BC.HashPassword(credentials.Password));
+            var result = await userRepository.Register(credentials.Username, BC.HashPassword(credentials.Password), credentials.Name!);
             if (result.Success)
             {
                 return Ok(result);
