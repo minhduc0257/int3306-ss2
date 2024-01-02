@@ -57,6 +57,7 @@ namespace int3306.Api.Controllers
             return res.Success ? BaseResult<bool>.FromSuccess(true) : BaseResult<bool>.FromError(res.Error);
         }
 
+        [HttpGet]
         public async Task<IBaseResult<List<Product>>> GetByType(int type)
         {
             throw new NotImplementedException();
