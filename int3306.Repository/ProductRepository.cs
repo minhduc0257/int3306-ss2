@@ -9,19 +9,24 @@ namespace int3306.Repository
     {
         public ProductRepository(DataContext dataContext) : base(dataContext) {}
 
+        private IQueryable<Product> GetBaseJoinedQuery(IQueryable<Product>? baseQuery = null)
+        {
+            return (baseQuery ?? DataContext.GetDbSet<Product>())
+                .Include(product => product.ProductType)
+                .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
+                .ThenInclude(tag => tag.ProductTag)
+                .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
+                .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
+                .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0))
+                .Include(product => product.Stocks.Where(pt => pt.Status > 0))
+                .AsSplitQuery();
+        }
+        
         public override async Task<IBaseResult<Product>> Get(int id)
         {
             try
             {
-                var r = await DataContext.GetDbSet<Product>()
-                    .Include(product => product.ProductType)
-                    .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
-                    .ThenInclude(tag => tag.ProductTag)
-                    .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
-                    .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
-                    .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0))
-                    .Include(product => product.Stocks.Where(pt => pt.Status > 0))
-                    .AsSplitQuery()
+                var r = await GetBaseJoinedQuery()
                     .FirstOrDefaultAsync(e => e.Id == id);
                 if (r != null)
                 {
@@ -57,15 +62,8 @@ namespace int3306.Repository
                                     join `products` p
                                          on p.id = pr.product_id
                                 """ + (inUse ? " where p.status > 0" : ""));
-                
-                var a = (IQueryable<Product>)DataContext.GetDbSet<Product>()
-                    .Include(product => product.ProductType)
-                    .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
-                    .ThenInclude(tag => tag.ProductTag)
-                    .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
-                    .Include(product => product.Stocks.Where(pt => pt.Status > 0))
-                    .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
-                    .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0));
+
+                var a = GetBaseJoinedQuery();
 
                 if (inUse)
                 {
@@ -100,14 +98,8 @@ namespace int3306.Repository
                     query = DataContext.GetDbSet<Product>()
                         .FromSql($"select * from products where name LIKE {"%" + model.Query + "%"}");
                 }
-                    
-                query = query.Include(product => product.ProductType)
-                    .Include(product => product.ProductToTags.Where(pt => pt.Status > 0))
-                    .ThenInclude(tag => tag.ProductTag)
-                    .Include(product => product.ProductThumbnails.Where(pt => pt.Status > 0))
-                    .Include(product => product.Stocks.Where(pt => pt.Status > 0))
-                    .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
-                    .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0));
+
+                query = GetBaseJoinedQuery(query);
 
                 if (model.ProductType > 0)
                 {
@@ -142,6 +134,21 @@ namespace int3306.Repository
             {
                 return BaseResult<List<Product>>.FromError(e.ToString());
             }
+        }
+
+        public async Task<IBaseResult<List<Product>>> GetByType(int type)
+        {
+            var query = GetBaseJoinedQuery();
+            query = type switch
+            {
+                1 => query.OrderByDescending(p => p.Id),
+                2 => query.OrderByDescending(p => p.Name),
+                _ => query.OrderByDescending(p => p.Description)
+            };
+            query = query.Take(20);
+
+            var result = await query.ToListAsync();
+            return BaseResult<List<Product>>.FromSuccess(result);
         }
     }
 }

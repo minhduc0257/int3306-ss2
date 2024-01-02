@@ -58,9 +58,11 @@ namespace int3306.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IBaseResult<List<Product>>> GetByType(int type)
+        [Route("GetByType/{type:int}")]
+        public async Task<ActionResult<IBaseResult<List<Product>>>> GetByType(int type)
         {
-            throw new NotImplementedException();
+            var response = await productRepository.GetByType(type);
+            return ResultResponse(response);
         }
     }
 }

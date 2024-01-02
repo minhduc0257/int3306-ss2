@@ -100,6 +100,7 @@ namespace int3306.Repository
                 else
                 {
                     existing.Count += entity.Count;
+                    entity = existing;
                     await DataContext.SaveChangesAsync();
                 }
 
