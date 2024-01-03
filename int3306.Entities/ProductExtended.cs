@@ -12,5 +12,8 @@ namespace int3306.Entities
         
         [Column("rating")]  
         public float Rating { get; set; }
+        
+        [Column("count")]
+        public int Count { get; set; }
     }
 }
