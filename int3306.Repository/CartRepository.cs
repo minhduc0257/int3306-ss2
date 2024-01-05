@@ -119,7 +119,7 @@ namespace int3306.Repository
         {
             var a = (IQueryable<Cart>) DataContext.GetDbSet<Cart>();
             var r = await a
-                .Where(a => a.Status > 0)
+                .Where(a => a.Status > 0 && a.Count > 0)
                 .CountAsync(a => ids.Contains(a.Id));
 
             return ids.Count == r;
@@ -131,10 +131,15 @@ namespace int3306.Repository
             {
                 var a = (IQueryable<Cart>) DataContext.GetDbSet<Cart>();
                 a = a
-                    .Where(entity => entity.Status > 0)
+                    .Where(entity => entity.Status > 0 && entity.Count > 0)
                     .Where(entity => entity.UserId == userId);
 
                 a = a
+                    .Include(c => c.CartVariants)
+                    .ThenInclude(cv => cv.Variant)
+                    
+                    .Include(c => c.CartVariants)
+                    .ThenInclude(cv => cv.VariantValue)
                     .Include(c => c.Product)
                     .ThenInclude(
                         p => p!.ProductThumbnails

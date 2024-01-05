@@ -54,6 +54,9 @@ namespace int3306.Entities
 
         [NotMapped]
         public float Rating { get; set; }
+        
+        [NotMapped]
+        public int TotalOrder { get; set; }
 #pragma warning restore CS8618
     }
 }

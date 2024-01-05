@@ -78,7 +78,8 @@ namespace int3306.Repository
             {
                 var a = GetBaseJoinedQuery()
                     .Where(entity => entity.Status > 0)
-                    .Where(entity => entity.UserId == userId);
+                    .Where(entity => entity.UserId == userId)
+                    .OrderByDescending(entity => entity.Timestamp);
 
                 var result = await a.ToListAsync();
                 foreach (var o in result)
@@ -106,6 +107,8 @@ namespace int3306.Repository
                 {
                     a = a.Where(entity => entity.Status > 0);
                 }
+
+                a = a.OrderByDescending(entity => entity.Timestamp);
 
                 var result = await a.ToListAsync();
                 foreach (var o in result)

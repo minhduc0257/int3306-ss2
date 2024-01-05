@@ -49,8 +49,9 @@ namespace int3306.Repository
                         .ToListAsync();
 
                     r.Rating = rating.Count == 0 ? 0 : (float)rating.Average();
+                    r.TotalOrder = order.GetValueOrDefault(id, 0);
                     r.Stock = r.Stocks.Count == 0 ? 0 : r.Stocks.Select(s => s.Count).Sum();
-                    r.Stock -= order.GetValueOrDefault(id, 0);
+                    r.Stock -= r.TotalOrder;
                     r.Stock = Math.Max(r.Stock, 0);
                 }
                 return r != null ? BaseResult<Product>.FromSuccess(r) : BaseResult<Product>.FromNotFound();
@@ -92,7 +93,9 @@ namespace int3306.Repository
                     r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
                     r.Stock = r.Stocks.Select(s => s.Count).Sum();
                     r.Rating = rating.GetValueOrDefault(r.Id, 0);
-                    r.Stock -= order.GetValueOrDefault(r.Id, 0);
+                    r.TotalOrder = order.GetValueOrDefault(r.Id, 0);
+                    r.Stock = r.Stocks.Count == 0 ? 0 : r.Stocks.Select(s => s.Count).Sum();
+                    r.Stock -= r.TotalOrder;
                     r.Stock = Math.Max(r.Stock, 0);
                     return r;
                 }).ToList();
@@ -158,8 +161,9 @@ namespace int3306.Repository
                 {
                     r.ProductTags = r.ProductToTags.Select(r => r.ProductTag).ToList();
                     r.Rating = rating.GetValueOrDefault(r.Id, 0);
-                    r.Stock = r.Stocks.Select(s => s.Count).Sum();
-                    r.Stock -= order.GetValueOrDefault(r.Id, 0);
+                    r.TotalOrder = order.GetValueOrDefault(r.Id, 0);
+                    r.Stock = r.Stocks.Count == 0 ? 0 : r.Stocks.Select(s => s.Count).Sum();
+                    r.Stock -= r.TotalOrder;
                     r.Stock = Math.Max(r.Stock, 0);
                     return r;
                 }).ToList();
