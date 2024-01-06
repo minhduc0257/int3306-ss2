@@ -13,6 +13,7 @@ namespace int3306.Repository
             return DataContext.GetDbSet<Order>()
                 .Include(o => o.OrderDetails)
                 .ThenInclude(d => d.Product)
+                .ThenInclude(d => d.ProductThumbnails)
 
                 .Include(o => o.OrderDetails)
                 .ThenInclude(o => o.OrderDetailVariant)

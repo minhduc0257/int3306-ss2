@@ -1,3 +1,4 @@
+using System.Net;
 using int3306.Entities;
 using int3306.Repository.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +17,9 @@ namespace int3306.Repository
             return await result;
         }
 
-        public override async Task<IBaseResult<User>> Get(int id)
+        public override Task<IBaseResult<User>> Get(int id)
         {
-            var r = await base.Get(id);
-            if (r is { Success: true, Data: not null })
-            {
-                r.Data.Password = "";
-            }
-
-            return r;
+            return GetWithDetail(id);
         }
 
         public async Task<IBaseResult<User>> GetWithDetail(int id)
@@ -32,6 +27,7 @@ namespace int3306.Repository
             var db = DataContext.GetDbSet<User>();
             var result = await db
                 .Include(u => u.Detail)
+                .Include(u => u.UserAddress)
                 .Include(u => u.UserToRoles)
                 .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -55,6 +51,7 @@ namespace int3306.Repository
             {
                 var a = (IQueryable<User>)DataContext.GetDbSet<User>()
                     .Include(u => u.Detail)
+                    .Include(u => u.UserAddress)
                     .Include(u => u.UserToRoles)
                     .ThenInclude(ur => ur.Role);
 
@@ -104,6 +101,40 @@ namespace int3306.Repository
                 await DataContext.Database.CommitTransactionAsync();
 
                 return BaseResult<bool>.FromSuccess(true);
+            }
+            catch (Exception e)
+            {
+                await DataContext.Database.RollbackTransactionAsync();
+                return BaseResult<bool>.FromError(e.ToString());
+            }
+        }
+
+        public async Task<IBaseResult<bool>> ChangePassword(int userId, string old, string @new)
+        {
+            
+            try
+            {
+                var p = BC.HashPassword(old);
+                var r = await DataContext.GetDbSet<User>().AnyAsync(u => u.Id == userId);
+
+                if (!r)
+                {
+                    return BaseResult<bool>.FromNotFound();
+                }
+
+                await DataContext.Database.BeginTransactionAsync();
+                var record = await DataContext.GetDbSet<User>().FirstAsync(u => u.Id == userId);
+                if (!BC.Verify(old, record.Password))
+                {
+                    await DataContext.Database.RollbackTransactionAsync();
+                    return BaseResult<bool>.FromError("Wrong password", HttpStatusCode.Forbidden);
+                }
+
+                record.Password = BC.HashPassword(@new);
+                await DataContext.SaveChangesAsync();
+                await DataContext.Database.CommitTransactionAsync();
+                return BaseResult<bool>.FromSuccess(true);
+
             }
             catch (Exception e)
             {

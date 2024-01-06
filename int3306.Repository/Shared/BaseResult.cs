@@ -35,14 +35,14 @@ namespace int3306.Repository.Shared
             };
         }
         
-        public static BaseResult<TEntity> FromError(string error)
+        public static BaseResult<TEntity> FromError(string error, HttpStatusCode code = HttpStatusCode.BadRequest)
         {
             return new BaseResult<TEntity>
             {
                 Data = default,
                 Success = false,
                 Error = error,
-                StatusCodeHint = HttpStatusCode.BadRequest
+                StatusCodeHint = code
             };
         }
         

@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using int3306.Api.Structures;
 using int3306.Entities;
 using int3306.Repository;
+using int3306.Repository.Models;
 using int3306.Repository.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,18 @@ namespace int3306.Api.Controllers
         {
             this.userRepository = userRepository;
             this.userToRoleRepository = userToRoleRepository;
+        }
+
+        [Route("ChangePassword")]
+        [HttpPut]
+        public async Task<ActionResult<IBaseResult<bool>>> ChangePassword([FromBody] ChangePasswordModel passwordModel)
+        {
+            var r = await userRepository.ChangePassword(
+                GetUserId()!.Value,
+                passwordModel.OldPassword,
+                passwordModel.NewPassword
+            );
+            return ResultResponse(r);
         }
 
         public override Task<ActionResult<IBaseResult<User>>> Put(int id, User payload)

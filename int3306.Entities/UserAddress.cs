@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using int3306.Entities.Shared;
+using Newtonsoft.Json;
 
 namespace int3306.Entities
 {
@@ -29,5 +30,9 @@ namespace int3306.Entities
         
         [Column("user_id")]
         public int UserId {get;set;}
+        
+        [ForeignKey(nameof(UserId))]
+        [JsonIgnore]
+        public virtual User? User { get; set; }
     }
 }

@@ -32,10 +32,14 @@ namespace int3306.Entities
 
         [Newtonsoft.Json.JsonIgnore]
         [JsonIgnore]
+
         public virtual ICollection<UserToRole> UserToRoles { get; set; } = new List<UserToRole>();
         
         [NotMapped]
         public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+        
+
+        public virtual UserAddress? UserAddress { get; set; }
 #pragma warning restore CS8618
     }
 }
