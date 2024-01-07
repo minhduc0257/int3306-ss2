@@ -26,9 +26,9 @@ namespace int3306.Api.Controllers
         [HttpGet]
         [RequirePermission(PermissionIndex.Admin)]
         [Route("ListAll")]
-        public async Task<ActionResult<IBaseResult<List<UserPaymentMethod>>>> ListAll()
+        public Task<ActionResult<IBaseResult<List<UserPaymentMethod>>>> ListAll()
         {
-            return await base.List();
+            return base.List();
         }
 
         public override Task<ActionResult<IBaseResult<UserPaymentMethod>>> Post(UserPaymentMethod payload)

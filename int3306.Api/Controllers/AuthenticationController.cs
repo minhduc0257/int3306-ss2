@@ -30,7 +30,7 @@ namespace int3306.Api.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<IBaseResult<bool>>> Register([FromBody] CredentialModel credentials)
+        public async Task<ActionResult<IBaseResult<bool>>> Register([FromBody] RegisterModel credentials)
         {
             var user = await userRepository.GetByUsername(credentials.Username);
             if (user != null)
@@ -38,7 +38,11 @@ namespace int3306.Api.Controllers
                 return Conflict(BaseResult<bool>.FromError("Username already exists!"));
             }
 
-            var result = await userRepository.Register(credentials.Username, BC.HashPassword(credentials.Password), credentials.Name!);
+            var result = await userRepository.Register(
+                credentials.Username, BC.HashPassword(credentials.Password), 
+                credentials.Name,
+                credentials.Email
+            );
             if (result.Success)
             {
                 return Ok(result);

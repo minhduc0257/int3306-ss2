@@ -76,7 +76,7 @@ namespace int3306.Repository
             }
         }
 
-        public async Task<IBaseResult<bool>> Register(string username, string hashedPassword, string name)
+        public async Task<IBaseResult<bool>> Register(string username, string hashedPassword, string name, string email)
         {
             try
             {
@@ -89,7 +89,10 @@ namespace int3306.Repository
                     Password = hashedPassword
                 };
 
-                var userDetails = new UserDetail();
+                var userDetails = new UserDetail
+                {
+                    Email = email
+                };
 
                 await DataContext.Database.BeginTransactionAsync();
                 DataContext.Add(newUser);

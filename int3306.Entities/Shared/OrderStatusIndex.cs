@@ -1,4 +1,4 @@
-namespace int3306.Api.Structures
+namespace int3306.Entities.Shared
 {
     public enum OrderStatusIndex
     {

@@ -1,4 +1,5 @@
 using int3306.Entities;
+using int3306.Entities.Shared;
 using int3306.Repository.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,6 +71,45 @@ namespace int3306.Repository
             {
                 await DataContext.Database.RollbackTransactionAsync();
                 return BaseResult<int>.FromError(e.ToString());
+            }
+        }
+
+        public override async Task<IBaseResult<Order>> Put(int id, Order entity)
+        {
+            try
+            {
+                var current = await DataContext.GetDbSet<Order>().FirstOrDefaultAsync(e => e.Id == id);
+                
+                if (current == null) return BaseResult<Order>.FromNotFound();
+                var entry = DataContext.Entry(current);
+
+                entity.Id = id;
+                if (current.Status != entity.Status)
+                {
+                    switch ((OrderStatusIndex) entity.Status)
+                    {
+                        case OrderStatusIndex.Cancelled: 
+                            entity.TimeCancelled = DateTime.Now;
+                            break;
+                        case OrderStatusIndex.Preparing: 
+                            entity.TimePreparing = DateTime.Now;
+                            break;
+                        case OrderStatusIndex.Shipping: 
+                            entity.TimeShipping = DateTime.Now;
+                            break;
+                        case OrderStatusIndex.Shipped: 
+                            entity.TimeShipped = DateTime.Now;
+                            break;
+                    }
+                }
+                
+                entry.CurrentValues.SetValues(entity);
+                await DataContext.SaveChangesAsync();
+                return BaseResult<Order>.FromSuccess(entry.Entity);
+            }
+            catch (Exception e)
+            {
+                return BaseResult<Order>.FromError(e.ToString());
             }
         }
 

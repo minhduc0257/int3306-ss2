@@ -47,5 +47,14 @@ namespace int3306.Entities
         
         [ForeignKey(nameof(UserId))]
         public virtual User? User { get; set; }
+        
+        [Column("time_cancelled")]
+        public DateTime? TimeCancelled { get; set; }
+        [Column("time_preparing")]
+        public DateTime? TimePreparing { get; set; }
+        [Column("time_shipping")]
+        public DateTime? TimeShipping { get; set; }
+        [Column("time_shipped")]
+        public DateTime? TimeShipped { get; set; }
     }
 }
