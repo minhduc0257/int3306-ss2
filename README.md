@@ -1,12 +1,13 @@
-## Get up and running
-##### Requirement : .NET 7 SDK, MySQL database
+## Backend của [P4L](https://github.com/huetrantt21020018/P4L/)
+##### Yêu cầu : .NET 7 SDK, database MySQL
 
-- Set the following environment variable. `.env` is supported. 
+- Clone repository này về và thực hiện các lệnh dưới đây ở thư mục gốc.
+- Set các biến môi trường sau. `.env` được hỗ trợ.  
   - `MARIADB_CONNECTION_STRING`=`Server=yourserver;Port=your_port;User=your_user;Password=your_user;Database=your_db`
-  - `JWT_KEY`=`your JWT key`
-  - `JWT_ISSUER`=`your JWT issuer`
-  - `JWT_AUDIENCE`=`your JWT audience`
-  - `STATIC_PATH`=`absolute path; frontend will be served from here`
-  - `DATA_PATH`=`absolute path; uploaded files will be served from here`
-- Run `dotnet run --project int3306.Api`
-  - Ensure port 5000 is available.
+  - `JWT_KEY`=`khóa cho JWT`
+  - `JWT_ISSUER`=`bên cấp token JWT`
+  - `JWT_AUDIENCE`=`trường audience trong JWT`
+  - `STATIC_PATH`=`đường dẫn tuyệt đối đến frontend; index.html sẽ được serve từ đây`
+  - `DATA_PATH`=`đường dẫn tuyệt đối đến folder chứa các tập tin được tải lên`
+- Chạy `dotnet run --project int3306.Api`
+  - Yêu cầu port 5000 còn trống. 
