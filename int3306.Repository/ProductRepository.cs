@@ -30,6 +30,7 @@ namespace int3306.Repository
                 .Include(product => product.ProductVariants.Where(pv => pv.Status > 0))
                 .ThenInclude(pv => pv.ProductVariantValues.Where(pvv => pvv.Status > 0))
                 .Include(product => product.Stocks.Where(pt => pt.Status > 0))
+                .Where(d => d.Status > 0)
                 .AsSplitQuery();
         }
         
