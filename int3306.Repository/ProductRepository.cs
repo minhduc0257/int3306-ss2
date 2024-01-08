@@ -53,6 +53,7 @@ namespace int3306.Repository
                     r.Stock = r.Stocks.Count == 0 ? 0 : r.Stocks.Select(s => s.Count).Sum();
                     r.Stock -= r.TotalOrder;
                     r.Stock = Math.Max(r.Stock, 0);
+                    r.ProductThumbnails = r.ProductThumbnails.OrderByDescending(a => a.Priority).ToList();
                 }
                 return r != null ? BaseResult<Product>.FromSuccess(r) : BaseResult<Product>.FromNotFound();
             }
@@ -97,6 +98,7 @@ namespace int3306.Repository
                     r.Stock = r.Stocks.Count == 0 ? 0 : r.Stocks.Select(s => s.Count).Sum();
                     r.Stock -= r.TotalOrder;
                     r.Stock = Math.Max(r.Stock, 0);
+                    r.ProductThumbnails = r.ProductThumbnails.OrderByDescending(a => a.Priority).ToList();
                     return r;
                 }).ToList();
                 return BaseResult<List<Product>>.FromSuccess(result);
@@ -165,6 +167,7 @@ namespace int3306.Repository
                     r.Stock = r.Stocks.Count == 0 ? 0 : r.Stocks.Select(s => s.Count).Sum();
                     r.Stock -= r.TotalOrder;
                     r.Stock = Math.Max(r.Stock, 0);
+                    r.ProductThumbnails = r.ProductThumbnails.OrderByDescending(a => a.Priority).ToList();
                     return r;
                 }).ToList();
                 return BaseResult<List<Product>>.FromSuccess(result);
@@ -187,6 +190,10 @@ namespace int3306.Repository
             query = query.Take(20);
 
             var result = await query.ToListAsync();
+            foreach (var r in result)
+            {
+                r.ProductThumbnails = r.ProductThumbnails.OrderByDescending(a => a.Priority).ToList();
+            }
             return BaseResult<List<Product>>.FromSuccess(result);
         }
     }
